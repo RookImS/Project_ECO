@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Tile neighbor;
+    private float _fertility;
+    private TileManager.TileKind _kind;
+    public SpriteRenderer spriteRenderer;
 
-    // Update is called once per frame
-    void Update()
+    public virtual void ChangeKind(TileManager.TileInfo info)
     {
-        
+        spriteRenderer.sprite = info.sprite;
+        _kind = info.kind;
     }
 }

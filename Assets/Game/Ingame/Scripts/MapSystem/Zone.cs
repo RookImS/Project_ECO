@@ -4,28 +4,29 @@ using UnityEngine;
 
 public class Zone : MonoBehaviour
 {
-    private int size;
-    public Zone(int size)
+    public List<GameObject> biomeList;
+    private int _size;
+
+    private void Awake()
     {
-        this.size = size;
+        List<GameObject> biomeList = new List<GameObject>();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            biomeList.Add(transform.GetChild(i).gameObject);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void MakeZone(TileManager.TileInfo info)
     {
-        
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawCube(new Vector3((float)size / 2, (float)size / 2), new Vector3((float)size, (float)size, 1));
-        //Gizmos.DrawLine(new Vector3(0, 0, 0), new Vector3((float)size, (float)size, 0));
+        Biome biome;
+        foreach (GameObject biomeObject in biomeList)
+        {
+            biome = biomeObject.GetComponent<Biome>();
+            biome.MakeBiome(info);
+        }
     }
 }

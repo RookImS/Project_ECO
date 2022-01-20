@@ -4,28 +4,14 @@ using UnityEngine;
 
 public class Zone : MonoBehaviour
 {
-    public List<GameObject> biomeList;
+    public List<Biome> biomeList;
+    public Zone[] _neighbor = new Zone[4];  // 0: N // 1: W // 2: S // 3: E
     private int _size;
-
-    private void Awake()
-    {
-        List<GameObject> biomeList = new List<GameObject>();
-    }
-
-    private void Start()
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            biomeList.Add(transform.GetChild(i).gameObject);
-        }
-    }
 
     public void MakeZone(TileManager.TileInfo info)
     {
-        Biome biome;
-        foreach (GameObject biomeObject in biomeList)
+        foreach (Biome biome in biomeList)
         {
-            biome = biomeObject.GetComponent<Biome>();
             biome.MakeBiome(info);
         }
     }

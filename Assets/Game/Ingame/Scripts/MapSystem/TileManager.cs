@@ -47,9 +47,6 @@ public class TileManager : MonoSingleton<TileManager>
     {
         tileInfoList = new List<TileInfo>();
         climateTileInfoList = new List<ClimateTileInfo>();
-    }
-    private void Start()
-    {
         tileInfoList = tileTemplate.ToList();
         climateTileInfoList = climateTileTemplate.ToList();
     }

@@ -5,6 +5,11 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class TileArranger : MonoBehaviour
 {
+    private enum direction
+    {
+        N = 0, W = 1, S = 2, E = 3
+    };
+
     [Tooltip("tile狼 农扁甫 搬沥")]
     public int tileScale;
     [Tooltip("biome郴 tile狼 俺荐甫 搬沥(啊肺惑狼 俺荐)")]
@@ -34,7 +39,6 @@ public class TileArranger : MonoBehaviour
 
         SetNeighbor();
 
-
         this.enabled = false;
     }
 
@@ -59,13 +63,14 @@ public class TileArranger : MonoBehaviour
 
         // zone 救俊 biome 积己
         _biomeLength = tileScale * biomeSize;
+        Biome tempBiome = null;
+        Tile tempTile = null;
         foreach (Zone zone in _zones)
         {
             zone.biomeList = new List<Biome>();
-
-            for (int i = 0; i < zoneSize; ++i)
+            for (int i = 0; i < zoneSize; ++i)  // biomeRow
             {
-                for (int j = 0; j < zoneSize; ++j)
+                for (int j = 0; j < zoneSize; ++j)  // biomeCol
                 {
                     GameObject biomeObject = new GameObject("Biome" + (i * zoneSize + j));
                     biomeObject.transform.SetParent(zone.transform);
@@ -73,17 +78,20 @@ public class TileArranger : MonoBehaviour
                     biomeObject.transform.localPosition = new Vector3(_biomeLength * j, _biomeLength * i, 0);
                     biomeObject.AddComponent<Biome>();
 
-                    zone.biomeList.Add(biomeObject.GetComponent<Biome>());
+                    tempBiome = biomeObject.GetComponent<Biome>();
+                    tempBiome.zone = zone;
+
+                    zone.biomeList.Add(tempBiome);
                     zone.biomeList[i * zoneSize + j].tileList = new List<Tile>();
 
                     // biome 救俊 tile 积己
-                    for (int m = 0; m < biomeSize; ++m)
+                    for (int m = 0; m < biomeSize; ++m) // tileRow
                     {
                         GameObject rowObject = new GameObject("Row" + m);
                         rowObject.transform.SetParent(biomeObject.transform);
 
                         rowObject.transform.localPosition = new Vector3(0, tileScale * m, 0);
-                        for (int n = 0; n < biomeSize; ++n)
+                        for (int n = 0; n < biomeSize; ++n) //tileCol
                         {
                             GameObject tileObject = Instantiate(tilePrefab, rowObject.transform);
                             tileObject.name = "Tile" + n;
@@ -91,7 +99,10 @@ public class TileArranger : MonoBehaviour
                             tileObject.transform.localPosition = new Vector3(tileScale * n, 0, 0);
                             tileObject.transform.localScale = new Vector3(tileScale, tileScale, 0);
 
-                            zone.biomeList[i * zoneSize + j].tileList.Add(tileObject.GetComponent<Tile>());
+                            tempTile = tileObject.GetComponent<Tile>();
+                            tempTile.biome = tempBiome;
+
+                            zone.biomeList[i * zoneSize + j].tileList.Add(tempTile);
                         }
                     }
                 }
@@ -101,34 +112,163 @@ public class TileArranger : MonoBehaviour
 
     private void SetNeighbor()
     {
+        int col = 0;
+        int row = 0;
+        int dir = 0;
 
-    }
-
-    private GameObject FindParentNeighbor(GameObject parentObject, int direction)      // 0: N // 1: W // 2: S // 3: E
-    {
-        GameObject parentNeighborObject = null;
-
-        switch (direction)
+        // 备裙 贸府
+        for (int i = 0; i < mapSize * mapSize; ++i)
         {
-            case 0:         // North
-                
-                break;
-            case 1:         // West
+            col = i % mapSize;
+            row = i / mapSize;
 
-                break;
-            case 2:         // South
+            // 0: N // 1: W // 2: S // 3: E
+            // 合率 贸府
+            dir = (int)direction.N;
+            if (row + 1 >= mapSize)
+                _zones[i].neighbor[dir] = null;
+            else
+                _zones[i].neighbor[dir] = _zones[i + mapSize];
 
-                break;
-            case 3:         // East
+            // 辑率 贸府
+            dir = (int)direction.W;
+            if (col + 1 >= mapSize)
+                _zones[i].neighbor[dir] = null;
+            else
+                _zones[i].neighbor[dir] = _zones[i + 1];
 
-                break;
-            default:
-                Debug.Log("Failed to find neighbor");
-                break;
+            // 巢率 贸府
+            dir = (int)direction.S;
+            if (row - 1 < 0)
+                _zones[i].neighbor[dir] = null;
+            else
+                _zones[i].neighbor[dir] = _zones[i - mapSize];
+
+            // 悼率 贸府
+            dir = (int)direction.E;
+            if (col - 1 < 0)
+                _zones[i].neighbor[dir] = null;
+            else
+                _zones[i].neighbor[dir] = _zones[i - 1];
         }
-        
 
+        // 官捞咳 贸府
+        foreach (Zone zone in _zones)
+        {
+            for (int i = 0; i < zoneSize * zoneSize; ++i)
+            {
+                col = i % zoneSize;
+                row = i / zoneSize;
 
-        return parentNeighborObject;
+                // 合率 贸府
+                dir = (int)direction.N;
+                if (row + 1 >= zoneSize)
+                {
+                    if (ReferenceEquals(zone.neighbor[dir], null))
+                        zone.biomeList[i].neighbor[dir] = null;
+                    else
+                        zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[col];
+                }
+                else
+                    zone.biomeList[i].neighbor[dir] = zone.biomeList[i + zoneSize];
+
+                // 辑率 贸府
+                dir = (int)direction.W;
+                if (col + 1 >= zoneSize)
+                {
+                    if (ReferenceEquals(zone.neighbor[dir], null))
+                        zone.biomeList[i].neighbor[dir] = null;
+                    else
+                        zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[row * zoneSize];
+                }
+                else
+                    zone.biomeList[i].neighbor[dir] = zone.biomeList[i + 1];
+
+                // 巢率 贸府
+                dir = (int)direction.S;
+                if (row - 1 < 0)
+                {
+                    if (ReferenceEquals(zone.neighbor[dir], null))
+                        zone.biomeList[i].neighbor[dir] = null;
+                    else
+                        zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[(zoneSize - 1) * zoneSize + col];
+                }
+                else
+                    zone.biomeList[i].neighbor[dir] = zone.biomeList[i - zoneSize];
+
+                // 悼率 贸府
+                dir = (int)direction.E;
+                if (col - 1 < 0)
+                {
+                    if (ReferenceEquals(zone.neighbor[dir], null))
+                        zone.biomeList[i].neighbor[dir] = null;
+                    else
+                        zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[row * zoneSize + zoneSize - 1];
+                }
+                else
+                    zone.biomeList[i].neighbor[dir] = zone.biomeList[i - 1];
+            }
+        }
+
+        // 鸥老 贸府
+        foreach (Zone zone in _zones)
+        {
+            foreach (Biome biome in zone.biomeList)
+            {
+                for (int i = 0; i < biomeSize * biomeSize; ++i)
+                {
+                    col = i % biomeSize;
+                    row = i / biomeSize;
+
+                    // 合率 贸府
+                    dir = (int)direction.N;
+                    if (row + 1 >= biomeSize)
+                    {
+                        if (ReferenceEquals(biome.neighbor[dir], null))
+                            biome.tileList[i].neighbor[dir] = null;
+                        else
+                            biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[col];
+                    }
+                    else
+                        biome.tileList[i].neighbor[dir] = biome.tileList[i + biomeSize];
+
+                    // 辑率 贸府
+                    dir = (int)direction.W;
+                    if (col + 1 >= biomeSize)
+                    {
+                        if (ReferenceEquals(biome.neighbor[dir], null))
+                            biome.tileList[i].neighbor[dir] = null;
+                        else
+                            biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[row * biomeSize];
+                    }
+                    else
+                        biome.tileList[i].neighbor[dir] = biome.tileList[i + 1];
+
+                    // 巢率 贸府
+                    dir = (int)direction.S;
+                    if (row - 1 < 0)
+                    {
+                        if (ReferenceEquals(biome.neighbor[dir], null))
+                            biome.tileList[i].neighbor[dir] = null;
+                        else
+                            biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[(biomeSize - 1) * biomeSize + col];
+                    }
+                    else
+                        biome.tileList[i].neighbor[dir] = biome.tileList[i - biomeSize];
+
+                    // 悼率 贸府
+                    dir = (int)direction.E;
+                    if (col - 1 < 0)
+                    {
+                        if (ReferenceEquals(biome.neighbor[dir], null))
+                            biome.tileList[i].neighbor[dir] = null;
+                        else
+                            biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[row * biomeSize + biomeSize - 1];
+                    }
+                    else
+                        biome.tileList[i].neighbor[dir] = biome.tileList[i - 1];
+                }
+            }
+        }
     }
 }

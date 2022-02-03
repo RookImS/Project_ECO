@@ -39,8 +39,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7087957553174370375}
-  - component: {fileID: 4450059350623056546}
-  - component: {fileID: 5123908424950836148}
+  - component: {fileID: 8292722106912765029}
   - component: {fileID: 2184205394785426458}
   m_Layer: 0
   m_Name: Tile
@@ -64,7 +63,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4450059350623056546
+--- !u!114 &8292722106912765029
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,22 +75,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9463b40d965c1724f926fa8ec2e255f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neighbor: {fileID: 0}
   spriteRenderer: {fileID: 2184205394785426458}
---- !u!114 &5123908424950836148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8758466102836171972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bce64325bce098f4e8e985eae03089c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  neighbor: {fileID: 0}
-  spriteRenderer: {fileID: 2184205394785426458}
+  biome: {fileID: 0}
+  neighbor:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!212 &2184205394785426458
 SpriteRenderer:
   m_ObjectHideFlags: 0

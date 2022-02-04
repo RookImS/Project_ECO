@@ -19,9 +19,9 @@ public class TileArranger : MonoBehaviour
     [Tooltip("map내 zone의 개수를 결정(가로상의 개수)")]
     public int mapSize;
 
-    public GameObject tilePrefab;
+    public Map map;
 
-    private List<Zone> _zones;
+    public GameObject tilePrefab;
 
     private int _zoneLength = 0;
     private int _biomeLength = 0;
@@ -29,8 +29,8 @@ public class TileArranger : MonoBehaviour
     void Update()
     {
         // 초기화
-        for (int i = transform.childCount - 1; i >= 0; --i)
-            DestroyImmediate(transform.GetChild(i).gameObject);
+        for (int i = map.transform.childCount - 1; i >= 0; --i)
+            DestroyImmediate(map.transform.GetChild(i).gameObject);
 
         _zoneLength = 0;
         _biomeLength = 0;
@@ -44,28 +44,31 @@ public class TileArranger : MonoBehaviour
 
     private void MakeTile()
     {
-        _zones = new List<Zone>();
+        map.zoneList = new List<Zone>();
         // zone을 생성
+        Zone tempZone;
         _zoneLength = tileScale * biomeSize * zoneSize;
         for (int i = 0; i < mapSize; ++i)
         {
             for (int j = 0; j < mapSize; ++j)
             {
                 GameObject zoneObject = new GameObject("Zone" + (i * mapSize + j));
-                zoneObject.transform.SetParent(transform);
+                zoneObject.transform.SetParent(map.transform);
 
                 zoneObject.transform.localPosition = new Vector3(_zoneLength * j, _zoneLength * i, 0);
                 zoneObject.AddComponent<Zone>();
+                tempZone = zoneObject.GetComponent<Zone>();
+                tempZone.id = i * mapSize + j;
 
-                _zones.Add(zoneObject.GetComponent<Zone>());
+                map.zoneList.Add(tempZone);
             }
         }
 
         // zone 안에 biome 생성
         _biomeLength = tileScale * biomeSize;
-        Biome tempBiome = null;
-        Tile tempTile = null;
-        foreach (Zone zone in _zones)
+        Biome tempBiome;
+        Tile tempTile;
+        foreach (Zone zone in map.zoneList)
         {
             zone.biomeList = new List<Biome>();
             for (int i = 0; i < zoneSize; ++i)  // biomeRow
@@ -80,11 +83,12 @@ public class TileArranger : MonoBehaviour
 
                     tempBiome = biomeObject.GetComponent<Biome>();
                     tempBiome.zone = zone;
+                    tempBiome.id = i * zoneSize + j;
 
                     zone.biomeList.Add(tempBiome);
-                    zone.biomeList[i * zoneSize + j].tileList = new List<Tile>();
 
                     // biome 안에 tile 생성
+                    zone.biomeList[i * zoneSize + j].tileList = new List<Tile>();
                     for (int m = 0; m < biomeSize; ++m) // tileRow
                     {
                         GameObject rowObject = new GameObject("Row" + m);
@@ -101,6 +105,7 @@ public class TileArranger : MonoBehaviour
 
                             tempTile = tileObject.GetComponent<Tile>();
                             tempTile.biome = tempBiome;
+                            tempTile.id = m * biomeSize + n;
 
                             zone.biomeList[i * zoneSize + j].tileList.Add(tempTile);
                         }
@@ -126,34 +131,34 @@ public class TileArranger : MonoBehaviour
             // 북쪽 처리
             dir = (int)direction.N;
             if (row + 1 >= mapSize)
-                _zones[i].neighbor[dir] = null;
+                map.zoneList[i].neighbor[dir] = null;
             else
-                _zones[i].neighbor[dir] = _zones[i + mapSize];
+                map.zoneList[i].neighbor[dir] = map.zoneList[i + mapSize];
 
             // 서쪽 처리
             dir = (int)direction.W;
             if (col + 1 >= mapSize)
-                _zones[i].neighbor[dir] = null;
+                map.zoneList[i].neighbor[dir] = null;
             else
-                _zones[i].neighbor[dir] = _zones[i + 1];
+                map.zoneList[i].neighbor[dir] = map.zoneList[i + 1];
 
             // 남쪽 처리
             dir = (int)direction.S;
             if (row - 1 < 0)
-                _zones[i].neighbor[dir] = null;
+                map.zoneList[i].neighbor[dir] = null;
             else
-                _zones[i].neighbor[dir] = _zones[i - mapSize];
+                map.zoneList[i].neighbor[dir] = map.zoneList[i - mapSize];
 
             // 동쪽 처리
             dir = (int)direction.E;
             if (col - 1 < 0)
-                _zones[i].neighbor[dir] = null;
+                map.zoneList[i].neighbor[dir] = null;
             else
-                _zones[i].neighbor[dir] = _zones[i - 1];
+                map.zoneList[i].neighbor[dir] = map.zoneList[i - 1];
         }
 
         // 바이옴 처리
-        foreach (Zone zone in _zones)
+        foreach (Zone zone in map.zoneList)
         {
             for (int i = 0; i < zoneSize * zoneSize; ++i)
             {
@@ -211,7 +216,7 @@ public class TileArranger : MonoBehaviour
         }
 
         // 타일 처리
-        foreach (Zone zone in _zones)
+        foreach (Zone zone in map.zoneList)
         {
             foreach (Biome biome in zone.biomeList)
             {

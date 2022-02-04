@@ -2,32 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapManager : MonoSingleton<MapManager>
+public class MapManager : MonoBehaviour
 {
-    public List<Zone> zoneList;
+    public int mapSeed; // 테스트를 위한 임시 변수
 
-    private void Awake()
-    {
-        zoneList = new List<Zone>();
-    }
+    public Map map;
+    public MapGenerator generator;
 
     private void Start()
     {
-        for(int i = 0; i < transform.childCount; i++)
-        {
-            zoneList.Add(transform.GetChild(i).GetComponent<Zone>());
-        }
-        
-        MakeMap();
+        GenerateMap(mapSeed);
     }
 
-    public void MakeMap()
+    public void GenerateMap(int seed)
     {
-        TileManager.TileInfo tileInfo;
-        for (int i = 0; i < zoneList.Count; i++)
-        {
-            tileInfo = TileManager.tileInfoList[i % TileManager.tileInfoList.Count];
-            zoneList[i].MakeZone(tileInfo);
-        }
+        generator.GenerateMap(seed);
     }
+
 }

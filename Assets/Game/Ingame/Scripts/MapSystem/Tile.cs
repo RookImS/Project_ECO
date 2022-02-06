@@ -8,7 +8,7 @@ public class Tile : MonoBehaviour
 
     public int id;
     public Biome biome;
-    public Tile[] neighbor = new Tile[4];  // 0: N // 1: W // 2: S // 3: E
+    public Tile[] neighbor = new Tile[4];  // 0: N // 1: E // 2: S // 3: W
 
     protected float _fertility;
     protected TileManager.TileKind _kind;

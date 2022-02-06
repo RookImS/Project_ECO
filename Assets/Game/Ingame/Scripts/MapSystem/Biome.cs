@@ -14,7 +14,7 @@ public class Biome : MonoBehaviour
     public Zone zone;
     public List<Tile> tileList;
     public static int tileCount;
-    public Biome[] neighbor = new Biome[4];    // 0: N // 1: W // 2: S // 3: E
+    public Biome[] neighbor = new Biome[4];    // 0: N // 1: E // 2: S // 3: W
 
     public Dictionary<TileManager.TileKind, List<int>> tileIdxListAsKind;
 

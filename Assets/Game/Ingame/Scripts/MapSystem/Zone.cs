@@ -9,7 +9,7 @@ public class Zone : MonoBehaviour
     public Map map;
     public List<Biome> biomeList;
     public static int biomeCount;
-    public Zone[] neighbor = new Zone[4];  // 0: N // 1: W // 2: S // 3: E
+    public Zone[] neighbor = new Zone[4];  // 0: N // 1: E // 2: S // 3: W
 
     private int _size;
 

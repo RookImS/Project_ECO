@@ -7,7 +7,7 @@ public class TileArranger : MonoBehaviour
 {
     private enum direction
     {
-        N = 0, W = 1, S = 2, E = 3
+        N = 0, E = 1, S = 2, W = 3
     };
 
     [Tooltip("tile狼 农扁甫 搬沥")]
@@ -127,7 +127,7 @@ public class TileArranger : MonoBehaviour
             col = i % mapSize;
             row = i / mapSize;
 
-            // 0: N // 1: W // 2: S // 3: E
+            // 0: N // 1: E // 2: S // 3: W
             // 合率 贸府
             dir = (int)direction.N;
             if (row + 1 >= mapSize)
@@ -135,8 +135,8 @@ public class TileArranger : MonoBehaviour
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i + mapSize];
 
-            // 辑率 贸府
-            dir = (int)direction.W;
+            // 悼率 贸府
+            dir = (int)direction.E;
             if (col + 1 >= mapSize)
                 map.zoneList[i].neighbor[dir] = null;
             else
@@ -149,8 +149,8 @@ public class TileArranger : MonoBehaviour
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i - mapSize];
 
-            // 悼率 贸府
-            dir = (int)direction.E;
+            // 辑率 贸府
+            dir = (int)direction.W;
             if (col - 1 < 0)
                 map.zoneList[i].neighbor[dir] = null;
             else
@@ -177,8 +177,8 @@ public class TileArranger : MonoBehaviour
                 else
                     zone.biomeList[i].neighbor[dir] = zone.biomeList[i + zoneSize];
 
-                // 辑率 贸府
-                dir = (int)direction.W;
+                // 悼率 贸府
+                dir = (int)direction.E;
                 if (col + 1 >= zoneSize)
                 {
                     if (ReferenceEquals(zone.neighbor[dir], null))
@@ -201,8 +201,8 @@ public class TileArranger : MonoBehaviour
                 else
                     zone.biomeList[i].neighbor[dir] = zone.biomeList[i - zoneSize];
 
-                // 悼率 贸府
-                dir = (int)direction.E;
+                // 辑率 贸府
+                dir = (int)direction.W;
                 if (col - 1 < 0)
                 {
                     if (ReferenceEquals(zone.neighbor[dir], null))
@@ -237,8 +237,8 @@ public class TileArranger : MonoBehaviour
                     else
                         biome.tileList[i].neighbor[dir] = biome.tileList[i + biomeSize];
 
-                    // 辑率 贸府
-                    dir = (int)direction.W;
+                    // 悼率 贸府
+                    dir = (int)direction.E;
                     if (col + 1 >= biomeSize)
                     {
                         if (ReferenceEquals(biome.neighbor[dir], null))
@@ -261,8 +261,8 @@ public class TileArranger : MonoBehaviour
                     else
                         biome.tileList[i].neighbor[dir] = biome.tileList[i - biomeSize];
 
-                    // 悼率 贸府
-                    dir = (int)direction.E;
+                    // 辑率 贸府
+                    dir = (int)direction.W;
                     if (col - 1 < 0)
                     {
                         if (ReferenceEquals(biome.neighbor[dir], null))

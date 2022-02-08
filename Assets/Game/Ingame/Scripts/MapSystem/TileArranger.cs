@@ -10,18 +10,18 @@ public class TileArranger : MonoBehaviour
         N = 0, E = 1, S = 2, W = 3
     };
 
-    [Tooltip("tile의 크기를 결정")]
-    public int tileScale;
-    [Tooltip("biome내 tile의 개수를 결정(가로상의 개수)")]
-    public int biomeSize;
-    [Tooltip("zone내 biome의 개수를 결정(가로상의 개수)")]
-    public int zoneSize;
+    public Map map;
+    public GameObject tilePrefab;
+
+    [Header("크기 설정")]
     [Tooltip("map내 zone의 개수를 결정(가로상의 개수)")]
     public int mapSize;
-
-    public Map map;
-
-    public GameObject tilePrefab;
+    [Tooltip("zone내 biome의 개수를 결정(가로상의 개수)")]
+    public int zoneSize;
+    [Tooltip("biome내 tile의 개수를 결정(가로상의 개수)")]
+    public int biomeSize;
+    [Tooltip("tile의 크기를 결정")]
+    public int tileScale;
 
     private int _zoneLength = 0;
     private int _biomeLength = 0;

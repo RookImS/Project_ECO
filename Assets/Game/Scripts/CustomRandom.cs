@@ -52,11 +52,12 @@ public static class CustomRandom
         }
     }
 
-    public static List<int> RandomlyDistributeNumber(int distNum, int distRandListCount, int limit)
+    public static List<int> RandomlyDistributeNumber(int distNum, int distRandListCount, List<int> limit)
     {
-        if (distNum > limit * distRandListCount)
+        if (distNum > limit.Sum())
         {
-            Debug.LogError("distRandListCount의 수만큼 distNum을 각각 분배했을 때, list 내에 반드시 limit을 초과하는 원소가 생깁니다.");
+            Debug.LogError("distNum을 분배했을 때, list 내에 반드시 limit을 초과하는 원소가 생깁니다.");
+            return null;
         }
 
         List<int> candiate = Enumerable.Range(0, distRandListCount).ToList();
@@ -69,7 +70,7 @@ public static class CustomRandom
             idx = Random.Range(0, candiate.Count);
             ++result[candiate[idx]];
 
-            if (result[candiate[idx]] + 1 > limit)
+            if (result[candiate[idx]] + 1 > limit[candiate[idx]])
                 candiate.RemoveAt(idx);
         }
 

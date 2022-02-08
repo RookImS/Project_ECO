@@ -4,19 +4,30 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
-    public int mapSeed; // 테스트를 위한 임시 변수
+    public int test_mapSeed; // 테스트를 위한 임시 변수
 
     public Map map;
-    public MapGenerator generator;
+    public MapGenerator mapGenerator;
+
+    private void Awake()
+    {
+        map.Init();
+    }
 
     private void Start()
     {
-        GenerateMap(mapSeed);
+        GenerateMap(test_mapSeed);
     }
 
     public void GenerateMap(int seed)
     {
-        generator.GenerateMap(seed);
+        mapGenerator.Init(seed);
+
+        // 산 설정
+        mapGenerator.SetStartTile(TileManager.TileKind.Mountain);
+
+        // 물 설정
+        mapGenerator.SetStartTile(TileManager.TileKind.Water);
     }
 
 }

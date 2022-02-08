@@ -13,18 +13,10 @@ public class Tile : MonoBehaviour
     protected float _fertility;
     protected TileManager.TileKind _kind;
 
-    private bool isGenerated;
-
     public virtual void Init()
     {
         _fertility = 0;
         ChangeKind(TileManager.TileKind.None);
-        isGenerated = false;
-    }
-
-    public bool CheckIsGenerated()
-    {
-        return isGenerated;
     }
 
     public virtual void SetTile(TileManager.TileKind kind)

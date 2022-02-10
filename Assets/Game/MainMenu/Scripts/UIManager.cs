@@ -5,10 +5,17 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoSingleton<UIManager>
 {
-    public void LoadGame(int dataFileIndex)
-    {
+    public static void handleStartNew () {
         SceneManager.LoadScene((int)GameManager.sceneIndex.ingame);
-
-        // 데이터 불러와서 처리하기
+    }
+    public static void handleStartLoad (int dataFileIndex) {
+        SceneManager.LoadScene((int)GameManager.sceneIndex.ingame);
+    }
+    public static void terminate() {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
     }
 }

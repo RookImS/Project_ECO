@@ -19,30 +19,30 @@ public class BiomeGenerator
         }
     }
 
-    public void SetStartTile(List<Biome> biomeList, TileManager.TileKind kind, int count)
+    public void SetStartTile(Zone zone, TileManager.TileKind kind, int count)
     {
-        List<int> notGenTileNum = new List<int>();
-        foreach (Biome biome in biomeList)
-            notGenTileNum.Add(_notGenTileNum[biome]);
+        // 아직 생성이 덜된 biome만을 다룸
+        List<Biome> incompleteBiomeList = GetIncompleteBiome(zone);
 
         // 각 biome의 시작 타일 개수를 정함
-        List<int> biomeStartTileNum = CustomRandom.RandomlyDistributeNumber(count, biomeList.Count, notGenTileNum);
+        List<int> notGenTileNum = new List<int>();
+        foreach (Biome biome in incompleteBiomeList)
+            notGenTileNum.Add(_notGenTileNum[biome]);
+        List<int> biomeStartTileNum = CustomRandom.RandomlyDistributeNumber(count, incompleteBiomeList.Count, notGenTileNum);
 
         Biome tempBiome;
-        List<Tile> incompleteTileList;
-        for (int i = 0; i < biomeList.Count; ++i)
+        for (int i = 0; i < incompleteBiomeList.Count; ++i)
         {
-            tempBiome = biomeList[i];
-            incompleteTileList = tileGenerator.GetIncompleteTile(tempBiome.tileList);
-            tileGenerator.SetStartTile(incompleteTileList, kind, biomeStartTileNum[i]);
+            tempBiome = incompleteBiomeList[i];
+            tileGenerator.SetStartTile(tempBiome, kind, biomeStartTileNum[i]);
         }
     }
 
-    public List<Biome> GetIncompleteBiome(List<Biome> biomeList)
+    public List<Biome> GetIncompleteBiome(Zone zone)
     {
         List<Biome> incompleteBiomeList = new List<Biome>();
 
-        foreach (Biome biome in biomeList)
+        foreach (Biome biome in zone.biomeList)
         {
             if (_notGenTileNum[biome] != 0)
                 incompleteBiomeList.Add(biome);
@@ -51,13 +51,13 @@ public class BiomeGenerator
         return incompleteBiomeList;
     }
 
-    public int CheckGenComplete(List<Biome> biomeList)
+    public int CheckGenComplete(Zone zone)
     {
         int notGenTileNum = 0;
 
-        foreach (Biome biome in biomeList)
+        foreach (Biome biome in zone.biomeList)
         {
-            _notGenTileNum[biome] = tileGenerator.CheckGenComplete(biome.tileList);
+            _notGenTileNum[biome] = tileGenerator.CheckGenComplete(biome);
             notGenTileNum += _notGenTileNum[biome];
         }
 

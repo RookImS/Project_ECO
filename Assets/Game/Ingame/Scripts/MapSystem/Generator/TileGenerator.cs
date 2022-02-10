@@ -20,9 +20,11 @@ public class TileGenerator
         }
     }
 
-    public void SetStartTile(List<Tile> tileList, TileManager.TileKind kind, int count)
+    public void SetStartTile(Biome biome, TileManager.TileKind kind, int count)
     {
-        List<int> candTileIdx = Enumerable.Range(0, tileList.Count).ToList();
+        List<Tile> incompleteTileList = GetIncompleteTile(biome);
+
+        List<int> candTileIdx = Enumerable.Range(0, incompleteTileList.Count).ToList();
         List<int> startTileIdx = CustomRandom.GetUniqueIntRandom(count, candTileIdx);
         List<int> needRemove = new List<int>();
 
@@ -33,12 +35,12 @@ public class TileGenerator
 
             for (int i = 0; i < startTileIdx.Count; ++i)
             {
-                tempTile = tileList[startTileIdx[i]];
+                tempTile = incompleteTileList[startTileIdx[i]];
                 if (!_isGenTile[tempTile])
                 {
                     tempTile.SetTile(kind);
                     _isGenTile[tempTile] = true;
-                    //tileIdxListAsKind[kind].Add(startTileIdx[i]);
+                    biome.tileListAsKind[kind].Add(tempTile);
 
                     needRemove.Add(startTileIdx[i]);
                 }
@@ -52,11 +54,16 @@ public class TileGenerator
         }
     }
 
-    public List<Tile> GetIncompleteTile(List<Tile> tileList)
+    private void MakeTileBranch(Tile tile, bool isCanOverlap)
+    {
+
+    }
+
+    public List<Tile> GetIncompleteTile(Biome biome)
     {
         List<Tile> incompleteTileList = new List<Tile>();
 
-        foreach (Tile tile in tileList)
+        foreach (Tile tile in biome.tileList)
         {
             if (!_isGenTile[tile])
                 incompleteTileList.Add(tile);
@@ -65,11 +72,11 @@ public class TileGenerator
         return incompleteTileList;
     }
 
-    public int CheckGenComplete(List<Tile> tileList)
+    public int CheckGenComplete(Biome biome)
     {
         int notGenTileNum = 0;
 
-        foreach (Tile tile in tileList)
+        foreach (Tile tile in biome.tileList)
         {
             if (!_isGenTile[tile])
                 ++notGenTileNum;

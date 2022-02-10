@@ -8,14 +8,14 @@ public class MapGenerator : MonoBehaviour
     public struct MapSetting
     {
         [System.Serializable]
-        public struct StartTileMinMax
+        public struct TileSetting
         {
             public TileManager.TileKind kind;
             public int minStart;
             public int maxStart;
         }
 
-        public List<StartTileMinMax> startTileMinMaxSettings;
+        public List<TileSetting> tileSettings;
     }
 
     public Map map;
@@ -33,24 +33,29 @@ public class MapGenerator : MonoBehaviour
 
     public void SetStartTile(TileManager.TileKind kind)
     {
-        bool isFind = false;
+        MapSetting.TileSetting? tileSetting = GetTileSetting(kind);
 
-        foreach (MapSetting.StartTileMinMax startTileMinMax in mapSettings.startTileMinMaxSettings)
+        if (tileSetting != null)
         {
-            if (startTileMinMax.kind == kind)
-            {
-                if (!zoneGenerator.CheckGenComplete(map.zoneList))
-                {
-                    List<Zone> incompleteZoneList = zoneGenerator.GetIncompleteZone(map.zoneList);
-                    zoneGenerator.SetStartTile(incompleteZoneList, kind, startTileMinMax.minStart, startTileMinMax.maxStart);
-                }
+            if (!zoneGenerator.CheckGenComplete(map))
+                zoneGenerator.SetStartTile(map, kind, tileSetting.Value.minStart, tileSetting.Value.maxStart);
+        }
+    }
 
-                isFind = true;
-                break;
+    private MapSetting.TileSetting? GetTileSetting(TileManager.TileKind kind)
+    {
+        MapSetting.TileSetting result;
+
+        foreach (MapSetting.TileSetting tileSetting in mapSettings.tileSettings)
+        {
+            if (tileSetting.kind == kind)
+            {
+                result = tileSetting;
+                return result;
             }
         }
 
-        if (!isFind)
-            Debug.LogError(kind + "종류의 시작타일 설정을 찾을 수 없습니다. " + gameObject.name + "의 설정을 확인하세요.");
+        Debug.LogError(kind + "에 대한 설정을 찾을 수 없습니다. " + gameObject.name + "의 설정을 확인하세요.");
+        return null;
     }
 }

@@ -15,7 +15,7 @@ public class Biome : MonoBehaviour
     public static int tileCount { get; private set; }
     public Biome[] neighbor = new Biome[4];    // 0: N // 1: E // 2: S // 3: W
 
-    public Dictionary<TileManager.TileKind, List<int>> tileIdxListAsKind;
+    public Dictionary<TileManager.TileKind, List<Tile>> tileListAsKind;
 
     private void Awake()
     {
@@ -27,8 +27,8 @@ public class Biome : MonoBehaviour
         foreach (Tile tile in tileList)
             tile.Init();
 
-        tileIdxListAsKind = new Dictionary<TileManager.TileKind, List<int>>();
+        tileListAsKind = new Dictionary<TileManager.TileKind, List<Tile>>();
         foreach (TileManager.TileKind kind in TileManager.GetEnumList<TileManager.TileKind>())
-            tileIdxListAsKind.Add(kind, new List<int>());
+            tileListAsKind.Add(kind, new List<Tile>());
     }
 }

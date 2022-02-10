@@ -6,14 +6,14 @@ public class ZoneGenerator
 {
     private BiomeGenerator biomeGenerator;
     private Dictionary<Zone, int> _notGenTileNum;
-    
+
     public void Init(Map map)
     {
         biomeGenerator = new BiomeGenerator();
         biomeGenerator.Init(map);
 
         _notGenTileNum = new Dictionary<Zone, int>();
-        foreach(Zone zone in map.zoneList)
+        foreach (Zone zone in map.zoneList)
             _notGenTileNum.Add(zone, Zone.biomeCount * Biome.tileCount);
     }
 
@@ -34,9 +34,15 @@ public class ZoneGenerator
         Zone tempZone;
         for (int i = 0; i < incompleteZoneList.Count; ++i)
         {
-            tempZone = incompleteZoneList[i];            
+            tempZone = incompleteZoneList[i];
             biomeGenerator.SetStartTile(tempZone, kind, zoneStartTileNum[i]);
         }
+    }
+
+    public void StretchTile(Map map, TileManager.TileKind kind, int proba, bool isCanOverlap)
+    {
+        foreach (Zone zone in map.zoneList)
+            biomeGenerator.StretchTile(zone, kind, proba, isCanOverlap);
     }
 
     public List<Zone> GetIncompleteZone(Map map)

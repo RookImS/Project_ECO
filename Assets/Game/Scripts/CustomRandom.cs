@@ -76,4 +76,31 @@ public static class CustomRandom
 
         return result;
     }
+
+    public static bool RandomlyPickByProba(int proba)
+    {
+        int randVal = Random.Range(0, 100);
+
+        if (randVal < proba)
+            return true;
+        else
+            return false;
+    }
+
+    public static int RandomPickAsProba(List<int> probaList)
+    {
+        int randVal = Random.Range(0, probaList.Sum());
+        int cumulatedVal = 0;
+        int resultIdx = 0;
+
+        for (int i = 0; i < probaList.Count; ++i)
+        {
+            cumulatedVal += probaList[i];
+
+            if (randVal < probaList[i])
+                resultIdx = i;
+        }
+
+        return resultIdx;
+    }
 }

@@ -25,9 +25,11 @@ public class MapManager : MonoBehaviour
 
         // 산 설정
         mapGenerator.SetStartTile(TileManager.TileKind.Mountain);
+        mapGenerator.StretchTile(TileManager.TileKind.Mountain, false);
 
         // 물 설정
         mapGenerator.SetStartTile(TileManager.TileKind.Water);
+        mapGenerator.StretchTile(TileManager.TileKind.Water, false);
     }
 
 }

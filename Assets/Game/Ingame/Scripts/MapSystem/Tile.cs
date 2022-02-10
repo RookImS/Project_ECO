@@ -10,8 +10,9 @@ public class Tile : MonoBehaviour
     public Biome biome;
     public Tile[] neighbor = new Tile[4];  // 0: N // 1: E // 2: S // 3: W
 
+    public TileManager.TileKind kind;
+
     protected float _fertility;
-    protected TileManager.TileKind _kind;
 
     public virtual void Init()
     {
@@ -28,7 +29,7 @@ public class Tile : MonoBehaviour
     protected virtual void ChangeKind(TileManager.TileKind kind)
     {
         spriteRenderer.sprite = TileManager.tileInfoDict[kind].sprite;
-        _kind = TileManager.tileInfoDict[kind].kind;
+        this.kind = TileManager.tileInfoDict[kind].kind;
     }
 
     

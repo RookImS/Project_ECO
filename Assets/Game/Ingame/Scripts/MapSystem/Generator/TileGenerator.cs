@@ -5,10 +5,12 @@ using System.Linq;
 public class TileGenerator
 {
     private Dictionary<Tile, bool> _isGenTile;
+    private List<Tile> _changedTile;
 
     public void Init(Map map)
     {
         _isGenTile = new Dictionary<Tile, bool>();
+        _changedTile = new List<Tile>();
 
         foreach (Zone zone in map.zoneList)
         {
@@ -54,9 +56,53 @@ public class TileGenerator
         }
     }
 
-    private void MakeTileBranch(Tile tile, bool isCanOverlap)
+    public void StretchTile(Biome biome, TileManager.TileKind kind, int proba, bool isCanOverlap)
     {
+        foreach (Tile tile in biome.tileListAsKind[kind])
+        {
+            _changedTile.Clear();
+            MakeTileBranch(tile, proba, isCanOverlap);
+        }
+    }
 
+    private void MakeTileBranch(Tile tile, int proba, bool isCanOverlap)
+    {
+        _changedTile.Add(tile);
+
+        foreach (Tile neighborTile in tile.neighbor)
+        {
+            if (!ReferenceEquals(neighborTile, null))       // 이웃 타일이 null이 아니면
+            {
+                if (_changedTile.Find(x => ReferenceEquals(x, neighborTile)) == null)   // 변경된 타일이 아니면
+                {
+                    if (isCanOverlap)
+                    {
+                        bool isChange = CustomRandom.RandomlyPickByProba(proba);
+
+                        if (isChange)
+                        {
+                            neighborTile.SetTile(tile.kind);
+                            _isGenTile[neighborTile] = true;
+                            MakeTileBranch(neighborTile, proba, isCanOverlap);
+                        }
+                    }
+                    else
+                    {
+                        if (!_isGenTile[neighborTile])
+                        {
+                            bool isChange = CustomRandom.RandomlyPickByProba(proba);
+
+                            if (isChange)
+                            {
+                                neighborTile.SetTile(tile.kind);
+                                _isGenTile[neighborTile] = true;
+                                MakeTileBranch(neighborTile, proba, isCanOverlap);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public List<Tile> GetIncompleteTile(Biome biome)

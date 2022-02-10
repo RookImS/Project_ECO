@@ -37,6 +37,11 @@ public class BiomeGenerator
             tileGenerator.SetStartTile(tempBiome, kind, biomeStartTileNum[i]);
         }
     }
+    public void StretchTile(Zone zone, TileManager.TileKind kind, int proba, bool isCanOverlap)
+    {
+        foreach (Biome biome in zone.biomeList)
+            tileGenerator.StretchTile(biome, kind, proba, isCanOverlap);
+    }
 
     public List<Biome> GetIncompleteBiome(Zone zone)
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
-    public int test_mapSeed; // Å×½ºÆ®¸¦ À§ÇÑ ÀÓ½Ã º¯¼ö
+    public int test_mapSeed; // í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•œ ìž„ì‹œ ë³€ìˆ˜
 
     public Map map;
     public MapGenerator mapGenerator;
@@ -23,10 +23,10 @@ public class MapManager : MonoBehaviour
     {
         mapGenerator.Init(seed);
 
-        // »ê ¼³Á¤
+        // ì‚° ì„¤ì •
         mapGenerator.SetStartTile(TileManager.TileKind.Mountain);
 
-        // ¹° ¼³Á¤
+        // ë¬¼ ì„¤ì •
         mapGenerator.SetStartTile(TileManager.TileKind.Water);
     }
 

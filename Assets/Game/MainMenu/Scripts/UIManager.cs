@@ -9,6 +9,6 @@ public class UIManager : MonoSingleton<UIManager>
     {
         SceneManager.LoadScene((int)GameManager.sceneIndex.ingame);
 
-        // µ¥ÀÌÅÍ ºÒ·¯¿Í¼­ Ã³¸®ÇÏ±â
+        // ë°ì´í„° ë¶ˆëŸ¬ì™€ì„œ ì²˜ë¦¬í•˜ê¸°
     }
 }

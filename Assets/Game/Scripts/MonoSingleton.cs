@@ -1,13 +1,13 @@
 /*************************
- * ÃÖÁ¾¼öÁ¤ÀÏ : 2016-06-01
- * ÀÛ¼ºÀÚ : devchanho
- * ÆÄÀÏ¸í : MonoSingleton.cs
+ * ìµœì¢…ìˆ˜ì •ì¼ : 2016-06-01
+ * ì‘ì„±ì : devchanho
+ * íŒŒì¼ëª… : MonoSingleton.cs
  *
- * MonoBehaviour Àü¿ë ½Ì±ÛÅæ Å¬·¡½º.
- * ÀÌ¸¦ »ó¼Ó¹ŞÀº Å¬·¡½º´Â ½Ì±ÛÅæÀÌ µÈ´Ù.
- * ÀÏ¹İ Å¬·¡½º´Â Singleton »ç¿ë.
+ * MonoBehaviour ì „ìš© ì‹±ê¸€í†¤ í´ë˜ìŠ¤.
+ * ì´ë¥¼ ìƒì†ë°›ì€ í´ë˜ìŠ¤ëŠ” ì‹±ê¸€í†¤ì´ ëœë‹¤.
+ * ì¼ë°˜ í´ë˜ìŠ¤ëŠ” Singleton ì‚¬ìš©.
  *
- * ÂüÁ¶ :
+ * ì°¸ì¡° :
  * http://wiki.unity3d.com/index.php?title=Singleton#Generic_Based_Singleton_for_MonoBehaviours
  *************************/
 

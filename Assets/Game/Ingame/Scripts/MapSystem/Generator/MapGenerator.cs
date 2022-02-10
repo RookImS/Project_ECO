@@ -17,7 +17,7 @@ public class MapGenerator : MonoBehaviour
 
         public List<TileSetting> tileSettings;
     }
-
+    
     public Map map;
     public MapSetting mapSettings;
 
@@ -55,7 +55,7 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        Debug.LogError(kind + "¿¡ ´ëÇÑ ¼³Á¤À» Ã£À» ¼ö ¾ø½À´Ï´Ù. " + gameObject.name + "ÀÇ ¼³Á¤À» È®ÀÎÇÏ¼¼¿ä.");
+        Debug.LogError(kind + "ì— ëŒ€í•œ ì„¤ì •ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤. " + gameObject.name + "ì˜ ì„¤ì •ì„ í™•ì¸í•˜ì„¸ìš”.");
         return null;
     }
 }

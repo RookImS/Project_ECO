@@ -55,7 +55,7 @@ public class TileManager : MonoSingleton<TileManager>
             climateTileInfoDict.Add(info.kind, info);
     }
 
-    // enumÀ» genericÀ» ÀÌ¿ëÇØ list·Î º¯È¯ÇØ ¹İÈ¯ÇÑ´Ù.
+    // enumì„ genericì„ ì´ìš©í•´ listë¡œ ë³€í™˜í•´ ë°˜í™˜í•œë‹¤.
     public static List<TEnum> GetEnumList<TEnum>() where TEnum : System.Enum
     {
         List<TEnum> enumList = System.Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();

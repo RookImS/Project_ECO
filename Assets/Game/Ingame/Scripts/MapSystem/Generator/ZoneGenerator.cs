@@ -19,13 +19,13 @@ public class ZoneGenerator
 
     public void SetStartTile(Map map, TileManager.TileKind kind, int min, int max)
     {
-        // ÃÖ¼Ò, ÃÖ´ë °³¼ö¸¦ ÅëÇØ ½ÇÁ¦ ½ÃÀÛÅ¸ÀÏ °³¼ö¸¦ ±¸ÇÔ
+        // ìµœì†Œ, ìµœëŒ€ ê°œìˆ˜ë¥¼ í†µí•´ ì‹¤ì œ ì‹œì‘íƒ€ì¼ ê°œìˆ˜ë¥¼ êµ¬í•¨
         int startTileNum = Random.Range(min, max);
 
-        // ¾ÆÁ÷ »ı¼ºÀÌ ´úµÈ zone¸¸À» ´Ù·ë
+        // ì•„ì§ ìƒì„±ì´ ëœëœ zoneë§Œì„ ë‹¤ë£¸
         List<Zone> incompleteZoneList = GetIncompleteZone(map);
 
-        // °¢ zoneÀÇ ½ÃÀÛ Å¸ÀÏ °³¼ö¸¦ Á¤ÇÔ 
+        // ê° zoneì˜ ì‹œì‘ íƒ€ì¼ ê°œìˆ˜ë¥¼ ì •í•¨ 
         List<int> notGenTileNum = new List<int>();
         foreach (Zone zone in incompleteZoneList)
             notGenTileNum.Add(_notGenTileNum[zone]);

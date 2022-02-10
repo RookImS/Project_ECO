@@ -13,14 +13,14 @@ public class TileArranger : MonoBehaviour
     public Map map;
     public GameObject tilePrefab;
 
-    [Header("≈©±‚ º≥¡§")]
-    [Tooltip("map≥ª zone¿« ∞≥ºˆ∏¶ ∞·¡§(∞°∑ŒªÛ¿« ∞≥ºˆ)")]
+    [Header("ÌÅ¨Í∏∞ ÏÑ§Ï†ï")]
+    [Tooltip("mapÎÇ¥ zoneÏùò Í∞úÏàòÎ•º Í≤∞Ï†ï(Í∞ÄÎ°úÏÉÅÏùò Í∞úÏàò)")]
     public int mapSize;
-    [Tooltip("zone≥ª biome¿« ∞≥ºˆ∏¶ ∞·¡§(∞°∑ŒªÛ¿« ∞≥ºˆ)")]
+    [Tooltip("zoneÎÇ¥ biomeÏùò Í∞úÏàòÎ•º Í≤∞Ï†ï(Í∞ÄÎ°úÏÉÅÏùò Í∞úÏàò)")]
     public int zoneSize;
-    [Tooltip("biome≥ª tile¿« ∞≥ºˆ∏¶ ∞·¡§(∞°∑ŒªÛ¿« ∞≥ºˆ)")]
+    [Tooltip("biomeÎÇ¥ tileÏùò Í∞úÏàòÎ•º Í≤∞Ï†ï(Í∞ÄÎ°úÏÉÅÏùò Í∞úÏàò)")]
     public int biomeSize;
-    [Tooltip("tile¿« ≈©±‚∏¶ ∞·¡§")]
+    [Tooltip("tileÏùò ÌÅ¨Í∏∞Î•º Í≤∞Ï†ï")]
     public int tileScale;
 
     private int _zoneLength = 0;
@@ -28,7 +28,7 @@ public class TileArranger : MonoBehaviour
 
     void Update()
     {
-        // √ ±‚»≠
+        // Ï¥àÍ∏∞Ìôî
         for (int i = map.transform.childCount - 1; i >= 0; --i)
             DestroyImmediate(map.transform.GetChild(i).gameObject);
 
@@ -45,7 +45,7 @@ public class TileArranger : MonoBehaviour
     private void MakeTile()
     {
         map.zoneList = new List<Zone>();
-        // zone¿ª ª˝º∫
+        // zoneÏùÑ ÏÉùÏÑ±
         Zone tempZone;
         _zoneLength = tileScale * biomeSize * zoneSize;
         for (int i = 0; i < mapSize; ++i)
@@ -64,7 +64,7 @@ public class TileArranger : MonoBehaviour
             }
         }
 
-        // zone æ»ø° biome ª˝º∫
+        // zone ÏïàÏóê biome ÏÉùÏÑ±
         _biomeLength = tileScale * biomeSize;
         Biome tempBiome;
         Tile tempTile;
@@ -87,7 +87,7 @@ public class TileArranger : MonoBehaviour
 
                     zone.biomeList.Add(tempBiome);
 
-                    // biome æ»ø° tile ª˝º∫
+                    // biome ÏïàÏóê tile ÏÉùÏÑ±
                     zone.biomeList[i * zoneSize + j].tileList = new List<Tile>();
                     for (int m = 0; m < biomeSize; ++m) // tileRow
                     {
@@ -121,35 +121,35 @@ public class TileArranger : MonoBehaviour
         int row = 0;
         int dir = 0;
 
-        // ±∏»π √≥∏Æ
+        // Íµ¨Ìöç Ï≤òÎ¶¨
         for (int i = 0; i < mapSize * mapSize; ++i)
         {
             col = i % mapSize;
             row = i / mapSize;
 
             // 0: N // 1: E // 2: S // 3: W
-            // ∫œ¬  √≥∏Æ
+            // Î∂ÅÏ™Ω Ï≤òÎ¶¨
             dir = (int)direction.N;
             if (row + 1 >= mapSize)
                 map.zoneList[i].neighbor[dir] = null;
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i + mapSize];
 
-            // µø¬  √≥∏Æ
+            // ÎèôÏ™Ω Ï≤òÎ¶¨
             dir = (int)direction.E;
             if (col + 1 >= mapSize)
                 map.zoneList[i].neighbor[dir] = null;
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i + 1];
 
-            // ≥≤¬  √≥∏Æ
+            // ÎÇ®Ï™Ω Ï≤òÎ¶¨
             dir = (int)direction.S;
             if (row - 1 < 0)
                 map.zoneList[i].neighbor[dir] = null;
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i - mapSize];
 
-            // º≠¬  √≥∏Æ
+            // ÏÑúÏ™Ω Ï≤òÎ¶¨
             dir = (int)direction.W;
             if (col - 1 < 0)
                 map.zoneList[i].neighbor[dir] = null;
@@ -157,7 +157,7 @@ public class TileArranger : MonoBehaviour
                 map.zoneList[i].neighbor[dir] = map.zoneList[i - 1];
         }
 
-        // πŸ¿Ãø» √≥∏Æ
+        // Î∞îÏù¥Ïò¥ Ï≤òÎ¶¨
         foreach (Zone zone in map.zoneList)
         {
             for (int i = 0; i < zoneSize * zoneSize; ++i)
@@ -165,7 +165,7 @@ public class TileArranger : MonoBehaviour
                 col = i % zoneSize;
                 row = i / zoneSize;
 
-                // ∫œ¬  √≥∏Æ
+                // Î∂ÅÏ™Ω Ï≤òÎ¶¨
                 dir = (int)direction.N;
                 if (row + 1 >= zoneSize)
                 {
@@ -177,7 +177,7 @@ public class TileArranger : MonoBehaviour
                 else
                     zone.biomeList[i].neighbor[dir] = zone.biomeList[i + zoneSize];
 
-                // µø¬  √≥∏Æ
+                // ÎèôÏ™Ω Ï≤òÎ¶¨
                 dir = (int)direction.E;
                 if (col + 1 >= zoneSize)
                 {
@@ -189,7 +189,7 @@ public class TileArranger : MonoBehaviour
                 else
                     zone.biomeList[i].neighbor[dir] = zone.biomeList[i + 1];
 
-                // ≥≤¬  √≥∏Æ
+                // ÎÇ®Ï™Ω Ï≤òÎ¶¨
                 dir = (int)direction.S;
                 if (row - 1 < 0)
                 {
@@ -201,7 +201,7 @@ public class TileArranger : MonoBehaviour
                 else
                     zone.biomeList[i].neighbor[dir] = zone.biomeList[i - zoneSize];
 
-                // º≠¬  √≥∏Æ
+                // ÏÑúÏ™Ω Ï≤òÎ¶¨
                 dir = (int)direction.W;
                 if (col - 1 < 0)
                 {
@@ -215,7 +215,7 @@ public class TileArranger : MonoBehaviour
             }
         }
 
-        // ≈∏¿œ √≥∏Æ
+        // ÌÉÄÏùº Ï≤òÎ¶¨
         foreach (Zone zone in map.zoneList)
         {
             foreach (Biome biome in zone.biomeList)
@@ -225,7 +225,7 @@ public class TileArranger : MonoBehaviour
                     col = i % biomeSize;
                     row = i / biomeSize;
 
-                    // ∫œ¬  √≥∏Æ
+                    // Î∂ÅÏ™Ω Ï≤òÎ¶¨
                     dir = (int)direction.N;
                     if (row + 1 >= biomeSize)
                     {
@@ -237,7 +237,7 @@ public class TileArranger : MonoBehaviour
                     else
                         biome.tileList[i].neighbor[dir] = biome.tileList[i + biomeSize];
 
-                    // µø¬  √≥∏Æ
+                    // ÎèôÏ™Ω Ï≤òÎ¶¨
                     dir = (int)direction.E;
                     if (col + 1 >= biomeSize)
                     {
@@ -249,7 +249,7 @@ public class TileArranger : MonoBehaviour
                     else
                         biome.tileList[i].neighbor[dir] = biome.tileList[i + 1];
 
-                    // ≥≤¬  √≥∏Æ
+                    // ÎÇ®Ï™Ω Ï≤òÎ¶¨
                     dir = (int)direction.S;
                     if (row - 1 < 0)
                     {
@@ -261,7 +261,7 @@ public class TileArranger : MonoBehaviour
                     else
                         biome.tileList[i].neighbor[dir] = biome.tileList[i - biomeSize];
 
-                    // º≠¬  √≥∏Æ
+                    // ÏÑúÏ™Ω Ï≤òÎ¶¨
                     dir = (int)direction.W;
                     if (col - 1 < 0)
                     {

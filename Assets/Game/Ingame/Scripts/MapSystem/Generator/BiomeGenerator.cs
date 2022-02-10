@@ -21,10 +21,10 @@ public class BiomeGenerator
 
     public void SetStartTile(Zone zone, TileManager.TileKind kind, int count)
     {
-        // ¾ÆÁ÷ »ı¼ºÀÌ ´úµÈ biome¸¸À» ´Ù·ë
+        // ì•„ì§ ìƒì„±ì´ ëœëœ biomeë§Œì„ ë‹¤ë£¸
         List<Biome> incompleteBiomeList = GetIncompleteBiome(zone);
 
-        // °¢ biomeÀÇ ½ÃÀÛ Å¸ÀÏ °³¼ö¸¦ Á¤ÇÔ
+        // ê° biomeì˜ ì‹œì‘ íƒ€ì¼ ê°œìˆ˜ë¥¼ ì •í•¨
         List<int> notGenTileNum = new List<int>();
         foreach (Biome biome in incompleteBiomeList)
             notGenTileNum.Add(_notGenTileNum[biome]);

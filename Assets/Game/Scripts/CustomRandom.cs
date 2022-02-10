@@ -56,7 +56,7 @@ public static class CustomRandom
     {
         if (distNum > limit.Sum())
         {
-            Debug.LogError("distNumÀ» ºĞ¹èÇßÀ» ¶§, list ³»¿¡ ¹İµå½Ã limitÀ» ÃÊ°úÇÏ´Â ¿ø¼Ò°¡ »ı±é´Ï´Ù.");
+            Debug.LogError("distNumì„ ë¶„ë°°í–ˆì„ ë•Œ, list ë‚´ì— ë°˜ë“œì‹œ limitì„ ì´ˆê³¼í•˜ëŠ” ì›ì†Œê°€ ìƒê¹ë‹ˆë‹¤.");
             return null;
         }
 

@@ -21,7 +21,7 @@ public class Tile : MonoBehaviour
 
     public virtual void SetTile(TileManager.TileKind kind)
     {
-        _fertility = 40;    // ³ªÁß¿¡ »êÃâ ¹æ¹ı Á¤ÇØ¾ßÇÔ
+        _fertility = 40;    // ë‚˜ì¤‘ì— ì‚°ì¶œ ë°©ë²• ì •í•´ì•¼í•¨
         ChangeKind(kind);
     }
 

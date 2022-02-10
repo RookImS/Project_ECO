@@ -1,11 +1,11 @@
 /*************************
- * ÃÖÁ¾¼öÁ¤ÀÏ : 2016-06-01
- * ÀÛ¼ºÀÚ : devchanho
- * ÆÄÀÏ¸í : Singleton.cs
+ * ìµœì¢…ìˆ˜ì •ì¼ : 2016-06-01
+ * ìž‘ì„±ìž : devchanho
+ * íŒŒì¼ëª… : Singleton.cs
  *
- * ÀÏ¹Ý Å¬·¡½º Àü¿ë ½Ì±ÛÅæ Å¬·¡½º.
- * ÀÌ Å¬·¡½º¸¦ »ó¼Ó¹ÞÀº Å¬·¡½º´Â ½Ì±ÛÅæÀÌ µÈ´Ù.
- * MonoBehaviour Àü¿ë Å¬·¡½º´Â MonoSingleton »ç¿ë.
+ * ì¼ë°˜ í´ëž˜ìŠ¤ ì „ìš© ì‹±ê¸€í†¤ í´ëž˜ìŠ¤.
+ * ì´ í´ëž˜ìŠ¤ë¥¼ ìƒì†ë°›ì€ í´ëž˜ìŠ¤ëŠ” ì‹±ê¸€í†¤ì´ ëœë‹¤.
+ * MonoBehaviour ì „ìš© í´ëž˜ìŠ¤ëŠ” MonoSingleton ì‚¬ìš©.
  *************************/
 
 public class Singleton<T> where T : class, new()

@@ -57,8 +57,11 @@ public class TileArranger : MonoBehaviour
 
                 zoneObject.transform.localPosition = new Vector3(_zoneLength * j, _zoneLength * i, 0);
                 zoneObject.AddComponent<Zone>();
+
                 tempZone = zoneObject.GetComponent<Zone>();
-                tempZone.id = i * mapSize + j;
+                tempZone.map = map;
+                tempZone.row = i;
+                tempZone.col = j;
 
                 map.zoneList.Add(tempZone);
             }
@@ -83,7 +86,8 @@ public class TileArranger : MonoBehaviour
 
                     tempBiome = biomeObject.GetComponent<Biome>();
                     tempBiome.zone = zone;
-                    tempBiome.id = i * zoneSize + j;
+                    tempBiome.row = (zone.row * zoneSize) + i;
+                    tempBiome.col = (zone.col * zoneSize) + j;
 
                     zone.biomeList.Add(tempBiome);
 
@@ -105,7 +109,8 @@ public class TileArranger : MonoBehaviour
 
                             tempTile = tileObject.GetComponent<Tile>();
                             tempTile.biome = tempBiome;
-                            tempTile.id = m * biomeSize + n;
+                            tempTile.row = (tempBiome.row * biomeSize) + m;
+                            tempTile.col = (tempBiome.col * biomeSize) + n;
 
                             zone.biomeList[i * zoneSize + j].tileList.Add(tempTile);
                         }
@@ -117,9 +122,9 @@ public class TileArranger : MonoBehaviour
 
     private void SetNeighbor()
     {
-        int col = 0;
-        int row = 0;
-        int dir = 0;
+        int col;
+        int row;
+        int dir;
 
         // 구획 처리
         for (int i = 0; i < mapSize * mapSize; ++i)
@@ -131,28 +136,40 @@ public class TileArranger : MonoBehaviour
             // 북쪽 처리
             dir = (int)direction.N;
             if (row + 1 >= mapSize)
+            {
                 map.zoneList[i].neighbor[dir] = null;
+                map.zoneList[i].isEdge = true;
+            }
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i + mapSize];
 
             // 동쪽 처리
             dir = (int)direction.E;
             if (col + 1 >= mapSize)
+            {
                 map.zoneList[i].neighbor[dir] = null;
+                map.zoneList[i].isEdge = true;
+            }
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i + 1];
 
             // 남쪽 처리
             dir = (int)direction.S;
             if (row - 1 < 0)
+            {
                 map.zoneList[i].neighbor[dir] = null;
+                map.zoneList[i].isEdge = true;
+            }
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i - mapSize];
 
             // 서쪽 처리
             dir = (int)direction.W;
             if (col - 1 < 0)
+            {
                 map.zoneList[i].neighbor[dir] = null;
+                map.zoneList[i].isEdge = true;
+            }
             else
                 map.zoneList[i].neighbor[dir] = map.zoneList[i - 1];
         }
@@ -170,7 +187,10 @@ public class TileArranger : MonoBehaviour
                 if (row + 1 >= zoneSize)
                 {
                     if (ReferenceEquals(zone.neighbor[dir], null))
+                    {
                         zone.biomeList[i].neighbor[dir] = null;
+                        zone.biomeList[i].isEdge = true;
+                    }
                     else
                         zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[col];
                 }
@@ -182,7 +202,10 @@ public class TileArranger : MonoBehaviour
                 if (col + 1 >= zoneSize)
                 {
                     if (ReferenceEquals(zone.neighbor[dir], null))
+                    {
                         zone.biomeList[i].neighbor[dir] = null;
+                        zone.biomeList[i].isEdge = true;
+                    }
                     else
                         zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[row * zoneSize];
                 }
@@ -194,7 +217,10 @@ public class TileArranger : MonoBehaviour
                 if (row - 1 < 0)
                 {
                     if (ReferenceEquals(zone.neighbor[dir], null))
+                    {
                         zone.biomeList[i].neighbor[dir] = null;
+                        zone.biomeList[i].isEdge = true;
+                    }
                     else
                         zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[(zoneSize - 1) * zoneSize + col];
                 }
@@ -206,7 +232,10 @@ public class TileArranger : MonoBehaviour
                 if (col - 1 < 0)
                 {
                     if (ReferenceEquals(zone.neighbor[dir], null))
+                    {
                         zone.biomeList[i].neighbor[dir] = null;
+                        zone.biomeList[i].isEdge = true;
+                    }
                     else
                         zone.biomeList[i].neighbor[dir] = zone.neighbor[dir].biomeList[row * zoneSize + zoneSize - 1];
                 }
@@ -230,7 +259,10 @@ public class TileArranger : MonoBehaviour
                     if (row + 1 >= biomeSize)
                     {
                         if (ReferenceEquals(biome.neighbor[dir], null))
+                        {
                             biome.tileList[i].neighbor[dir] = null;
+                            biome.tileList[i].isEdge = true;
+                        }
                         else
                             biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[col];
                     }
@@ -242,7 +274,10 @@ public class TileArranger : MonoBehaviour
                     if (col + 1 >= biomeSize)
                     {
                         if (ReferenceEquals(biome.neighbor[dir], null))
+                        {
                             biome.tileList[i].neighbor[dir] = null;
+                            biome.tileList[i].isEdge = true;
+                        }
                         else
                             biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[row * biomeSize];
                     }
@@ -254,7 +289,10 @@ public class TileArranger : MonoBehaviour
                     if (row - 1 < 0)
                     {
                         if (ReferenceEquals(biome.neighbor[dir], null))
+                        {
                             biome.tileList[i].neighbor[dir] = null;
+                            biome.tileList[i].isEdge = true;
+                        }
                         else
                             biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[(biomeSize - 1) * biomeSize + col];
                     }
@@ -266,7 +304,10 @@ public class TileArranger : MonoBehaviour
                     if (col - 1 < 0)
                     {
                         if (ReferenceEquals(biome.neighbor[dir], null))
+                        {
                             biome.tileList[i].neighbor[dir] = null;
+                            biome.tileList[i].isEdge = true;
+                        }
                         else
                             biome.tileList[i].neighbor[dir] = biome.neighbor[dir].tileList[row * biomeSize + biomeSize - 1];
                     }

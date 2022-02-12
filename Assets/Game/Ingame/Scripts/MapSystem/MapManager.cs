@@ -20,6 +20,7 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         GenerateMap(test_mapSeed);
+        test = map.GetEdgeTiles();
     }
 
     public void GenerateMap(int seed)

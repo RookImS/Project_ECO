@@ -8,10 +8,13 @@ public class MapManager : MonoBehaviour
 
     public Map map;
     public MapGenerator mapGenerator;
+    public MapSetting mapSetting;
+    public List<Tile> test;
 
     private void Awake()
     {
         map.Init();
+        mapGenerator = new MapGenerator();
     }
 
     private void Start()
@@ -21,15 +24,14 @@ public class MapManager : MonoBehaviour
 
     public void GenerateMap(int seed)
     {
-        mapGenerator.Init(seed);
+        mapGenerator.Init(seed, map, mapSetting);
 
         // 산 설정
-        mapGenerator.SetStartTile(TileManager.TileKind.Mountain);
-        mapGenerator.StretchTile(TileManager.TileKind.Mountain, false);
+        mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Mountain);
+        mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Mountain, false);
 
         // 물 설정
-        mapGenerator.SetStartTile(TileManager.TileKind.Water);
-        mapGenerator.StretchTile(TileManager.TileKind.Water, false);
+        mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Water);
+        mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Water, true);
     }
-
 }

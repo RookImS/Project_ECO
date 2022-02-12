@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 public class BiomeGenerator
 {
-    private TileGenerator tileGenerator;
+    private TileGenerator _tileGenerator;
     private Dictionary<Biome, int> _notGenTileNum;
 
     public void Init(Map map)
     {
-        tileGenerator = new TileGenerator();
-        tileGenerator.Init(map);
+        _tileGenerator = new TileGenerator();
+        _tileGenerator.Init(map);
 
         _notGenTileNum = new Dictionary<Biome, int>();
         foreach (Zone zone in map.zoneList)
@@ -28,19 +28,19 @@ public class BiomeGenerator
         List<int> notGenTileNum = new List<int>();
         foreach (Biome biome in incompleteBiomeList)
             notGenTileNum.Add(_notGenTileNum[biome]);
-        List<int> biomeStartTileNum = CustomRandom.RandomlyDistributeNumber(count, incompleteBiomeList.Count, notGenTileNum);
+        List<int> biomeStartTileNum = CustomRandom.DistributeNumber(count, incompleteBiomeList.Count, notGenTileNum);
 
         Biome tempBiome;
         for (int i = 0; i < incompleteBiomeList.Count; ++i)
         {
             tempBiome = incompleteBiomeList[i];
-            tileGenerator.SetStartTile(tempBiome, kind, biomeStartTileNum[i]);
+            _tileGenerator.SetStartTile(tempBiome, kind, biomeStartTileNum[i]);
         }
     }
-    public void StretchTile(Zone zone, TileManager.TileKind kind, int proba, bool isCanOverlap)
+    public void StretchTile(Zone zone, MapSetting.TileSetting tileSetting, bool isCanOverlap)
     {
         foreach (Biome biome in zone.biomeList)
-            tileGenerator.StretchTile(biome, kind, proba, isCanOverlap);
+            _tileGenerator.StretchTile(biome, tileSetting, isCanOverlap);
     }
 
     public List<Biome> GetIncompleteBiome(Zone zone)
@@ -62,7 +62,7 @@ public class BiomeGenerator
 
         foreach (Biome biome in zone.biomeList)
         {
-            _notGenTileNum[biome] = tileGenerator.CheckGenComplete(biome);
+            _notGenTileNum[biome] = _tileGenerator.CheckGenComplete(biome);
             notGenTileNum += _notGenTileNum[biome];
         }
 

@@ -4,23 +4,23 @@ using UnityEngine;
 
 public class ZoneGenerator
 {
-    private BiomeGenerator biomeGenerator;
+    private BiomeGenerator _biomeGenerator;
     private Dictionary<Zone, int> _notGenTileNum;
 
     public void Init(Map map)
     {
-        biomeGenerator = new BiomeGenerator();
-        biomeGenerator.Init(map);
+        _biomeGenerator = new BiomeGenerator();
+        _biomeGenerator.Init(map);
 
         _notGenTileNum = new Dictionary<Zone, int>();
         foreach (Zone zone in map.zoneList)
             _notGenTileNum.Add(zone, Zone.biomeCount * Biome.tileCount);
     }
 
-    public void SetStartTile(Map map, TileManager.TileKind kind, int min, int max)
+    public void SetStartTile(Map map, MapSetting.TileSetting tileSetting)
     {
         // 최소, 최대 개수를 통해 실제 시작타일 개수를 구함
-        int startTileNum = Random.Range(min, max);
+        int startTileNum = Random.Range(tileSetting.minStart, tileSetting.maxStart);
 
         // 아직 생성이 덜된 zone만을 다룸
         List<Zone> incompleteZoneList = GetIncompleteZone(map);
@@ -29,20 +29,20 @@ public class ZoneGenerator
         List<int> notGenTileNum = new List<int>();
         foreach (Zone zone in incompleteZoneList)
             notGenTileNum.Add(_notGenTileNum[zone]);
-        List<int> zoneStartTileNum = CustomRandom.RandomlyDistributeNumber(startTileNum, incompleteZoneList.Count, notGenTileNum);
+        List<int> zoneStartTileNum = CustomRandom.DistributeNumber(startTileNum, incompleteZoneList.Count, notGenTileNum);
 
         Zone tempZone;
         for (int i = 0; i < incompleteZoneList.Count; ++i)
         {
             tempZone = incompleteZoneList[i];
-            biomeGenerator.SetStartTile(tempZone, kind, zoneStartTileNum[i]);
+            _biomeGenerator.SetStartTile(tempZone, tileSetting.kind, zoneStartTileNum[i]);
         }
     }
 
-    public void StretchTile(Map map, TileManager.TileKind kind, int proba, bool isCanOverlap)
+    public void StretchTile(Map map, MapSetting.TileSetting tileSetting, bool isCanOverlap)
     {
         foreach (Zone zone in map.zoneList)
-            biomeGenerator.StretchTile(zone, kind, proba, isCanOverlap);
+            _biomeGenerator.StretchTile(zone, tileSetting, isCanOverlap);
     }
 
     public List<Zone> GetIncompleteZone(Map map)
@@ -65,7 +65,7 @@ public class ZoneGenerator
 
         foreach (Zone zone in map.zoneList)
         {
-            _notGenTileNum[zone] = biomeGenerator.CheckGenComplete(zone);
+            _notGenTileNum[zone] = _biomeGenerator.CheckGenComplete(zone);
             notGenTileNum += _notGenTileNum[zone];
         }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class CustomRandom
 {
-    public static List<int> GetUniqueIntRandom(int count, int min, int max)
+    public static List<int> GetUniqueInt(int count, int min, int max)
     {
         List<int> candiate = Enumerable.Range(min, max - min).ToList();
 
@@ -22,7 +22,7 @@ public static class CustomRandom
 
         return result;
     }
-    public static List<int> GetUniqueIntRandom(int count, List<int> list)
+    public static List<int> GetUniqueInt(int count, List<int> list)
     {
         List<int> result = new List<int>();
         List<int> candiate = new List<int>(list);
@@ -38,7 +38,7 @@ public static class CustomRandom
 
         return result;
     }
-    public static void GetUniqueIntRandom(List<int> randList, List<int> list)
+    public static void GetUniqueInt(List<int> randList, List<int> list)
     {
         List<int> candiate = new List<int>(list);
 
@@ -52,7 +52,7 @@ public static class CustomRandom
         }
     }
 
-    public static List<int> RandomlyDistributeNumber(int distNum, int distRandListCount, List<int> limit)
+    public static List<int> DistributeNumber(int distNum, int distRandListCount, List<int> limit)
     {
         if (distNum > limit.Sum())
         {
@@ -77,8 +77,13 @@ public static class CustomRandom
         return result;
     }
 
-    public static bool RandomlyPickByProba(int proba)
+    public static bool PickByProba(int proba)
     {
+        if (proba < 0)
+            proba = 0;
+        else if (proba > 100)
+            proba = 100;
+
         int randVal = Random.Range(0, 100);
 
         if (randVal < proba)
@@ -87,7 +92,7 @@ public static class CustomRandom
             return false;
     }
 
-    public static int RandomPickAsProba(List<int> probaList)
+    public static int PickByProba(List<int> probaList)
     {
         int randVal = Random.Range(0, probaList.Sum());
         int cumulatedVal = 0;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class TileGenerator
 {
@@ -27,7 +28,7 @@ public class TileGenerator
         List<Tile> incompleteTileList = GetIncompleteTile(biome);
 
         List<int> candTileIdx = Enumerable.Range(0, incompleteTileList.Count).ToList();
-        List<int> startTileIdx = CustomRandom.GetUniqueIntRandom(count, candTileIdx);
+        List<int> startTileIdx = CustomRandom.GetUniqueInt(count, candTileIdx);
         List<int> needRemove = new List<int>();
 
         Tile tempTile;
@@ -52,57 +53,109 @@ public class TileGenerator
             foreach (int i in needRemove)
                 startTileIdx.Remove(i);
 
-            CustomRandom.GetUniqueIntRandom(startTileIdx, candTileIdx);
+            CustomRandom.GetUniqueInt(startTileIdx, candTileIdx);
         }
     }
 
-    public void StretchTile(Biome biome, TileManager.TileKind kind, int proba, bool isCanOverlap)
+    public void StretchTile(Biome biome, MapSetting.TileSetting tileSetting, bool isCanOverlap)
     {
-        foreach (Tile tile in biome.tileListAsKind[kind])
+        List<Tile> startTileList = new List<Tile>(biome.tileListAsKind[tileSetting.kind]);
+        foreach (Tile tile in startTileList)
         {
             _changedTile.Clear();
-            MakeTileBranch(tile, proba, isCanOverlap);
+            int dir = Random.Range(0, 4);
+            MakeTileBranch(tile, tileSetting.kind, tileSetting.stretchProba, 0, dir, isCanOverlap);
+        }
+
+        startTileList = new List<Tile>(biome.tileListAsKind[tileSetting.kind]);
+        foreach (Tile tile in startTileList)
+        {
+            _changedTile.Clear();
+            MakeTileSprawl(tile, tileSetting.kind, tileSetting.sprawlProba, isCanOverlap);
         }
     }
 
-    private void MakeTileBranch(Tile tile, int proba, bool isCanOverlap)
+    private void MakeTileBranch(Tile tile, TileManager.TileKind kind, int stretchProba, int bendProba, int dir, bool isCanOverlap)
+    {
+        _changedTile.Add(tile);
+
+        Tile neighborTile = tile.neighbor[dir];
+        if (!ReferenceEquals(neighborTile, null))
+        {
+            if (_changedTile.Find(x => ReferenceEquals(x, neighborTile)) == null)
+            {
+                if (_isGenTile[neighborTile])
+                {
+                    if (isCanOverlap && CustomRandom.PickByProba(50))
+                        goto BranchTile;
+                }
+                else
+                    goto BranchTile;
+
+            BranchTile:
+                {
+                    bool isChange;
+
+                    isChange = CustomRandom.PickByProba(stretchProba);
+
+                    if (isChange)
+                    {
+                        // Î∞©Ìñ•ÏÑ±ÏùÑ Î∞îÍæ∏Í≤å Îê† Í≤ÉÏù∏Í∞Ä?
+                        if (CustomRandom.PickByProba(bendProba))
+                        {
+                            bendProba = 0;
+                            if (CustomRandom.PickByProba(50))
+                                dir = (dir + 1) % 4;
+                            else
+                                dir = (dir + 3) % 4;
+                        }
+                        neighborTile.SetTile(kind);
+                        _isGenTile[neighborTile] = true;
+                        neighborTile.biome.tileListAsKind[kind].Add(neighborTile);
+                        MakeTileBranch(neighborTile, kind, stretchProba - 7, bendProba + 3 , dir, isCanOverlap);
+                    }
+                }
+            }
+        }
+    }
+
+    private void MakeTileSprawl(Tile tile, TileManager.TileKind kind, int sprawlProba, bool isCanOverlap)
     {
         _changedTile.Add(tile);
 
         foreach (Tile neighborTile in tile.neighbor)
         {
-            if (!ReferenceEquals(neighborTile, null))       // ¿ÃøÙ ≈∏¿œ¿Ã null¿Ã æ∆¥œ∏È
+            if (!ReferenceEquals(neighborTile, null))       // Ïù¥ÏõÉ ÌÉÄÏùºÏù¥ nullÏù¥ ÏïÑÎãàÎ©¥
             {
-                if (_changedTile.Find(x => ReferenceEquals(x, neighborTile)) == null)   // ∫Ø∞Êµ» ≈∏¿œ¿Ã æ∆¥œ∏È
+                if (_changedTile.Find(x => ReferenceEquals(x, neighborTile)) == null)   // Î≥ÄÍ≤ΩÎêú ÌÉÄÏùºÏù¥ ÏïÑÎãàÎ©¥
                 {
-                    if (isCanOverlap)
+                     if (isCanOverlap)
                     {
-                        bool isChange = CustomRandom.RandomlyPickByProba(proba);
-
-                        if (isChange)
-                        {
-                            neighborTile.SetTile(tile.kind);
-                            _isGenTile[neighborTile] = true;
-                            MakeTileBranch(neighborTile, proba, isCanOverlap);
-                        }
+                        goto MakeTile;
                     }
                     else
                     {
                         if (!_isGenTile[neighborTile])
-                        {
-                            bool isChange = CustomRandom.RandomlyPickByProba(proba);
-
-                            if (isChange)
-                            {
-                                neighborTile.SetTile(tile.kind);
-                                _isGenTile[neighborTile] = true;
-                                MakeTileBranch(neighborTile, proba, isCanOverlap);
-                            }
-                        }
+                            goto MakeTile;
                     }
+
+                MakeTile:
+                    {
+                        bool isChange;
+
+                        isChange = CustomRandom.PickByProba(sprawlProba);
+
+                        if (isChange)
+                        {
+                            neighborTile.SetTile(kind);
+                            _isGenTile[neighborTile] = true;
+                            neighborTile.biome.tileListAsKind[kind].Add(neighborTile);
+                            MakeTileSprawl(neighborTile, kind, sprawlProba - 5, isCanOverlap);
+                        }
+                     }
                 }
             }
-        }
+         }
     }
 
     public List<Tile> GetIncompleteTile(Biome biome)

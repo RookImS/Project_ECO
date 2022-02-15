@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BiomeGenerator
 {
@@ -43,13 +44,26 @@ public class BiomeGenerator
             _tileGenerator.StretchTile(biome, tileSetting, isCanOverlap);
     }
 
+    public void MakeRiver(Map map, List<Zone> riverPointZoneList, List<Tile> riverMaker)
+    {
+        List<Biome> riverPointBiomeList = new List<Biome>();
+        List<Biome> incompleteBiomeList;
+        foreach (Zone zone in riverPointZoneList)
+        {
+            incompleteBiomeList = GetIncompleteBiome(zone);
+            riverPointBiomeList.Add(CustomRandom.GetElement(incompleteBiomeList));
+        }
+
+        _tileGenerator.MakeRiver(map, riverPointBiomeList, riverMaker);
+    }
+
     public List<Biome> GetIncompleteBiome(Zone zone)
     {
         List<Biome> incompleteBiomeList = new List<Biome>();
 
         foreach (Biome biome in zone.biomeList)
         {
-            if (_notGenTileNum[biome] != 0)
+            if (_notGenTileNum[biome] > 0)
                 incompleteBiomeList.Add(biome);
         }
 
@@ -68,4 +82,6 @@ public class BiomeGenerator
 
         return notGenTileNum;
     }
+
+
 }

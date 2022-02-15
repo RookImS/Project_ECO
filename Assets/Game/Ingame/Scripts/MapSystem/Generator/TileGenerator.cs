@@ -23,38 +23,19 @@ public class TileGenerator
         }
     }
 
+    private void GenerateTile(Tile tile, TileManager.TileKind kind)
+    {
+        tile.SetTile(kind);
+        _isGenTile[tile] = true;
+    }
+
     public void SetStartTile(Biome biome, TileManager.TileKind kind, int count)
     {
         List<Tile> incompleteTileList = GetIncompleteTile(biome);
+        List<Tile> startTileList = CustomRandom.GetElements(count, incompleteTileList);
 
-        List<int> candTileIdx = Enumerable.Range(0, incompleteTileList.Count).ToList();
-        List<int> startTileIdx = CustomRandom.GetUniqueInt(count, candTileIdx);
-        List<int> needRemove = new List<int>();
-
-        Tile tempTile;
-        while (startTileIdx.Count > 0)
-        {
-            needRemove.Clear();
-
-            for (int i = 0; i < startTileIdx.Count; ++i)
-            {
-                tempTile = incompleteTileList[startTileIdx[i]];
-                if (!_isGenTile[tempTile])
-                {
-                    tempTile.SetTile(kind);
-                    _isGenTile[tempTile] = true;
-                    biome.tileListAsKind[kind].Add(tempTile);
-
-                    needRemove.Add(startTileIdx[i]);
-                }
-                candTileIdx.Remove(startTileIdx[i]);
-            }
-
-            foreach (int i in needRemove)
-                startTileIdx.Remove(i);
-
-            CustomRandom.GetUniqueInt(startTileIdx, candTileIdx);
-        }
+        foreach (Tile tile in startTileList)
+            GenerateTile(tile, kind);
     }
 
     public void StretchTile(Biome biome, MapSetting.TileSetting tileSetting, bool isCanOverlap)
@@ -92,7 +73,7 @@ public class TileGenerator
                 else
                     goto BranchTile;
 
-            BranchTile:
+                BranchTile:
                 {
                     bool isChange;
 
@@ -109,10 +90,8 @@ public class TileGenerator
                             else
                                 dir = (dir + 3) % 4;
                         }
-                        neighborTile.SetTile(kind);
-                        _isGenTile[neighborTile] = true;
-                        neighborTile.biome.tileListAsKind[kind].Add(neighborTile);
-                        MakeTileBranch(neighborTile, kind, stretchProba - 7, bendProba + 3 , dir, isCanOverlap);
+                        GenerateTile(neighborTile, kind);
+                        MakeTileBranch(neighborTile, kind, stretchProba - 7, bendProba + 3, dir, isCanOverlap);
                     }
                 }
             }
@@ -129,7 +108,7 @@ public class TileGenerator
             {
                 if (_changedTile.Find(x => ReferenceEquals(x, neighborTile)) == null)   // 변경된 타일이 아니면
                 {
-                     if (isCanOverlap)
+                    if (isCanOverlap)
                     {
                         goto MakeTile;
                     }
@@ -147,15 +126,145 @@ public class TileGenerator
 
                         if (isChange)
                         {
-                            neighborTile.SetTile(kind);
-                            _isGenTile[neighborTile] = true;
-                            neighborTile.biome.tileListAsKind[kind].Add(neighborTile);
+                            GenerateTile(neighborTile, kind);
                             MakeTileSprawl(neighborTile, kind, sprawlProba - 5, isCanOverlap);
                         }
-                     }
+                    }
                 }
             }
-         }
+        }
+    }
+
+    public void MakeRiver(Map map, List<Biome> riverPointBiomeList, List<Tile> riverMaker)
+    {
+        List<Tile> incompleteTileList;
+
+        foreach (Biome biome in riverPointBiomeList)
+        {
+            incompleteTileList = GetIncompleteTile(biome);
+            riverMaker.Insert(1, CustomRandom.GetElement(incompleteTileList));
+        }
+
+        for (int i = 0; i < riverMaker.Count - 1; ++i)
+        {
+            Tile startTile = riverMaker[i];
+            Tile endTile = riverMaker[i + 1];
+
+            List<int> rowRange, colRange;
+            rowRange = CustomTool.MakeRange(startTile.row, endTile.row, Biome.size, 0, Map.size * Zone.size * Biome.size - 1);
+            colRange = CustomTool.MakeRange(startTile.col, endTile.col, Biome.size, 0, Map.size * Zone.size * Biome.size - 1);
+            List<Tile> candiateTileList = GetTileInRange(map, startTile, endTile, rowRange, colRange);
+            candiateTileList.Remove(startTile);
+            candiateTileList.Remove(endTile);
+
+            int area = (rowRange[1] - rowRange[0]) * (colRange[1] - colRange[0]);
+            int pointNum = Random.Range(area / (15 * Biome.size), area / (10 * Biome.size));
+            List<Tile> detailRiverPoint = GetDetailPoint(startTile, endTile, pointNum, candiateTileList);
+
+            for (int k = 0; k < detailRiverPoint.Count - 1; ++k)
+            {
+                startTile = detailRiverPoint[k];
+                endTile = detailRiverPoint[k + 1];
+                List<float> lineEquation = CustomTool.MakeLineEquation(
+                    startTile.transform.position.x, startTile.transform.position.y,
+                    endTile.transform.position.x, endTile.transform.position.y);
+
+                rowRange = CustomTool.MakeRange(startTile.row, endTile.row);
+                colRange = CustomTool.MakeRange(startTile.col, endTile.col);
+                candiateTileList.Clear();
+                candiateTileList = GetTileInRange(map, startTile, endTile, rowRange, colRange);
+                ConnectRiver(candiateTileList, lineEquation);
+            }
+        }
+    }
+
+    private List<Tile> GetTileInRange(Map map, Tile startTile, Tile endTile, List<int> rowRange, List<int> colRange)
+    {
+        List<Tile> tileListInRange = new List<Tile>();
+        Tile tempTile;
+        for (int i = rowRange[0]; i <= rowRange[1]; ++i)
+        {
+            for (int j = colRange[0]; j <= colRange[1]; ++j)
+            {
+                tempTile = map.FindTile(i, j);
+
+                if (!_isGenTile[tempTile])
+                    tileListInRange.Add(map.FindTile(i, j));
+            }
+        }
+
+        return tileListInRange;
+    }
+
+    private List<Tile> GetDetailPoint(Tile startTile, Tile endTile, int count, List<Tile> candiate)
+    {
+        List<Tile> detailRiverPoint = CustomRandom.GetElements(count, candiate);
+
+        Vector2 riverDirVec = new Vector2(endTile.col - startTile.col, endTile.row - startTile.row);
+        float riverDirAngle = Vector2.SignedAngle(new Vector2(1, 0), riverDirVec.normalized);
+        List<Vector2> rotatedRiverPoint = new List<Vector2>();
+        Dictionary<Vector2, Tile> originalDict = new Dictionary<Vector2, Tile>();
+        for (int i = 0; i < detailRiverPoint.Count; ++i)    // 시작과 끝을 제외한 나머지를 정렬
+        {
+            Vector2 rotatePoint = CustomTool.Vec2DegRotate(new Vector2(detailRiverPoint[i].col, detailRiverPoint[i].row), -riverDirAngle);
+            rotatedRiverPoint.Add(rotatePoint);
+            originalDict[rotatePoint] = detailRiverPoint[i];
+        }
+        rotatedRiverPoint.Sort((vec1, vec2) => { return vec1.x.CompareTo(vec2.x); });
+        for (int i = 0; i < detailRiverPoint.Count; ++i)
+            detailRiverPoint[i] = originalDict[rotatedRiverPoint[i]];
+        detailRiverPoint.Insert(0, startTile);
+        detailRiverPoint.Add(endTile);
+
+        return detailRiverPoint;
+    }
+
+    private void ConnectRiver(List<Tile> candiateTileList, List<float> lineEquation)
+    {
+        if (lineEquation[0] == float.NaN || lineEquation.Count == 1)
+        {
+            foreach (Tile tile in candiateTileList)
+                GenerateTile(tile, TileManager.TileKind.Water);
+        }
+        else
+        {
+            float x1, y1, x2, y2;
+            foreach (Tile tile in candiateTileList)
+            {
+                x1 = tile.transform.position.x - Tile.scale.x / 2;
+                y1 = CustomTool.GetYByLineEquation(lineEquation, x1);
+                x2 = tile.transform.position.x + Tile.scale.x / 2;
+                y2 = CustomTool.GetYByLineEquation(lineEquation, x2);
+                float tilePosY = tile.transform.position.y;
+
+
+                if ((tilePosY - Tile.scale.y / 2 < y1 && y1 <= tilePosY + Tile.scale.y / 2) ||
+                    (tilePosY - Tile.scale.y / 2 < y2 && y2 <= tilePosY + Tile.scale.y / 2))
+                {
+                    GenerateTile(tile, TileManager.TileKind.Water);
+                }
+                else
+                {
+                    float y3 = tile.transform.position.y - Tile.scale.y / 2;
+                    float x3 = CustomTool.GetXByLineEquation(lineEquation, y3);
+                    float y4 = tile.transform.position.y + Tile.scale.y / 2;
+                    float x4 = CustomTool.GetXByLineEquation(lineEquation, y4);
+                    float tilePosX = tile.transform.position.x;
+                    if (lineEquation[0] > 0)
+                    {
+                        if ((tilePosX - Tile.scale.x / 2 <= x3 && x3 < tilePosX + Tile.scale.x / 2) ||
+                            (tilePosX - Tile.scale.x / 2 <= x4 && x4 < tilePosX + Tile.scale.x / 2))
+                            GenerateTile(tile, TileManager.TileKind.Water);
+                    }
+                    else
+                    {
+                        if ((tilePosX - Tile.scale.x / 2 < x3 && x3 <= tilePosX + Tile.scale.x / 2) ||
+                            (tilePosX - Tile.scale.x / 2 < x4 && x4 <= tilePosX + Tile.scale.x / 2))
+                            GenerateTile(tile, TileManager.TileKind.Water);
+                    }
+                }
+            }
+        }
     }
 
     public List<Tile> GetIncompleteTile(Biome biome)

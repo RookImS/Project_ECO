@@ -11,32 +11,58 @@ public class Biome : MonoBehaviour
 
     public Zone zone;
     public List<Tile> tileList;
-
-    public int row;
-    public int col;
     public Biome[] neighbor = new Biome[4];    // 0: N // 1: E // 2: S // 3: W
 
     [HideInInspector]
     public bool isEdge;
     public Dictionary<TileManager.TileKind, List<Tile>> tileListAsKind;
 
-    public static int biomeSize { get; private set; }
+    [SerializeField]
+    private int _row;
+    [SerializeField]
+    private int _col;
+    public int row { get { return _row; } private set { _row = value; } }
+    public int col { get { return _col; } private set { _col = value; } }
+
+    public static int size 
+    { get; private set; }
     public static int tileCount { get; private set; }
 
     private void Awake()
     {
-        biomeSize = (int)Mathf.Sqrt(tileList.Count);
+        size = (int)Mathf.Sqrt(tileList.Count);
         tileCount = tileList.Count;
     }
 
     public void Init()
     {
-        foreach (Tile tile in tileList)
-            tile.Init();
-
         tileListAsKind = new Dictionary<TileManager.TileKind, List<Tile>>();
         foreach (TileManager.TileKind kind in TileManager.GetEnumList<TileManager.TileKind>())
             tileListAsKind.Add(kind, new List<Tile>());
+
+        foreach (Tile tile in tileList)
+        {
+            tile.Init();
+            tileListAsKind[TileManager.TileKind.None].Add(tile);
+        }
+    }
+
+    public void SetRow(int row)
+    {
+        _row = row;
+    }
+    public void SetCol(int col)
+    {
+        _col = col;
+    }
+
+    public int GetRowDistance(Biome other)
+    {
+        return Mathf.Abs(_row - other.row);
+    }
+    public int GetColDistance(Biome other)
+    {
+        return Mathf.Abs(_col - other.col);
     }
 
     public List<Tile> GetEdgeTiles()
@@ -52,13 +78,18 @@ public class Biome : MonoBehaviour
         return edgeTileList;
     }
 
-    public int GetRowDistance(Biome other)
+    public Tile FindTile(int tileRow, int tileCol)
     {
-        return Mathf.Abs(row - other.row);
-    }
+        int childRow = tileRow - row * size;
+        int childCol = tileCol - col * size;
 
-    public int GetColDistance(Biome other)
-    {
-        return Mathf.Abs(col - other.col);
+        if (childRow < 0 || childRow >= size ||
+            childCol < 0 || childCol >= size)
+        {
+            Debug.Log("이 biome에 없는 tile입니다.");
+            return null;
+        }
+
+        return tileList[childRow * size + childCol];
     }
 }

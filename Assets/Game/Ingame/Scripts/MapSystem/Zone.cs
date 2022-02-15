@@ -6,20 +6,24 @@ public class Zone : MonoBehaviour
 {
     public Map map;
     public List<Biome> biomeList;
-
-    public int row;
-    public int col;
     public Zone[] neighbor = new Zone[4];  // 0: N // 1: E // 2: S // 3: W
 
     [HideInInspector]
     public bool isEdge;
 
-    public static int zoneSize { get; private set; }
+    [SerializeField]
+    private int _row;
+    [SerializeField]
+    private int _col;
+    public int row { get { return _row; } private set { _row = value; } }
+    public int col { get { return _col; } private set { _col = value; } }
+
+    public static int size { get; private set; }
     public static int biomeCount { get; private set; }
 
     private void Awake()
     {
-        zoneSize = (int)Mathf.Sqrt(biomeList.Count);
+        size = (int)Mathf.Sqrt(biomeList.Count);
         biomeCount = biomeList.Count;    
     }
 
@@ -27,6 +31,24 @@ public class Zone : MonoBehaviour
     {
         foreach (Biome biome in biomeList)
             biome.Init();
+    }
+
+    public void SetRow(int row)
+    {
+        _row = row;
+    }
+    public void SetCol(int col)
+    {
+        _col = col;
+    }
+
+    public int GetRowDistance(Zone other)
+    {
+        return Mathf.Abs(_row - other.row);
+    }
+    public int GetColDistance(Zone other)
+    {
+        return Mathf.Abs(_col - other.col);
     }
 
     public List<Tile> GetEdgeTiles()
@@ -42,14 +64,18 @@ public class Zone : MonoBehaviour
         return edgeTileList;
     }
 
-    public int GetRowDistance(Zone other)
+    public Tile FindTile(int tileRow, int tileCol)
     {
-        return Mathf.Abs(row - other.row);
-    }
+        int childRow = tileRow / Biome.size - row * size;
+        int childCol = tileCol / Biome.size - col * size;
 
-    public int GetColDistance(Zone other)
-    {
-        return Mathf.Abs(col - other.col);
-    }
+        if (childRow < 0 || childRow >= size ||
+            childCol < 0 || childCol >= size)
+        {
+            Debug.Log("이 zone에 없는 tile입니다.");
+            return null;
+        }
 
+        return biomeList[childRow * size + childCol].FindTile(tileRow, tileCol);
+    }
 }

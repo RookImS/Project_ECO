@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MapGenerator
@@ -32,6 +33,22 @@ public class MapGenerator
         if (tileSetting != null)
         {
             _zoneGenerator.StretchTile(map, tileSetting.Value, isCanOverlap);
+        }
+    }
+
+    public void MakeRiver(Map map, int num)
+    {
+        List<Tile> edgeTileList = map.GetEdgeTiles();
+        List<Tile> candiateList = CustomRandom.GetElements(2 * num, edgeTileList);
+
+        List<Tile> riverMaker;
+        for (int i = 0; i < num; ++i)
+        {
+            riverMaker = new List<Tile>();
+            riverMaker.Add(candiateList[i]);
+            riverMaker.Add(candiateList[i + 1]);
+
+            _zoneGenerator.MakeRiver(map, riverMaker);
         }
     }
 }

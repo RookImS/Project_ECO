@@ -20,19 +20,20 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         GenerateMap(test_mapSeed);
-        test = map.GetEdgeTiles();
     }
 
     public void GenerateMap(int seed)
     {
         mapGenerator.Init(seed, map, mapSetting);
 
-        // 산 설정
-        mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Mountain);
-        mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Mountain, false);
+        mapGenerator.MakeRiver(map, 1);
 
-        // 물 설정
-        mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Water);
-        mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Water, true);
+        // 산 설정
+        //mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Mountain);
+        //mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Mountain, false);
+
+        //// 물 설정
+        //mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Water);
+        //mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Water, true);
     }
 }

@@ -60,8 +60,8 @@ public class TileArranger : MonoBehaviour
 
                 tempZone = zoneObject.GetComponent<Zone>();
                 tempZone.map = map;
-                tempZone.row = i;
-                tempZone.col = j;
+                tempZone.SetRow(i);
+                tempZone.SetCol(j);
 
                 map.zoneList.Add(tempZone);
             }
@@ -86,8 +86,8 @@ public class TileArranger : MonoBehaviour
 
                     tempBiome = biomeObject.GetComponent<Biome>();
                     tempBiome.zone = zone;
-                    tempBiome.row = (zone.row * zoneSize) + i;
-                    tempBiome.col = (zone.col * zoneSize) + j;
+                    tempBiome.SetRow((zone.row * zoneSize) + i);
+                    tempBiome.SetCol((zone.col * zoneSize) + j);
 
                     zone.biomeList.Add(tempBiome);
 
@@ -109,8 +109,8 @@ public class TileArranger : MonoBehaviour
 
                             tempTile = tileObject.GetComponent<Tile>();
                             tempTile.biome = tempBiome;
-                            tempTile.row = (tempBiome.row * biomeSize) + m;
-                            tempTile.col = (tempBiome.col * biomeSize) + n;
+                            tempTile.SetRow((tempBiome.row * biomeSize) + m);
+                            tempTile.SetCol((tempBiome.col * biomeSize) + n);
 
                             zone.biomeList[i * zoneSize + j].tileList.Add(tempTile);
                         }

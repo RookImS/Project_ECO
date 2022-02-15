@@ -5,11 +5,17 @@ using UnityEngine;
 
 public static class CustomRandom
 {
-    public static List<int> GetUniqueInt(int count, int min, int max)
+    public static T GetElement<T>(List<T> list)
     {
-        List<int> candiate = Enumerable.Range(min, max - min).ToList();
+        int idx = Random.Range(0, list.Count);
 
-        List<int> result = new List<int>();
+        return list[idx];
+    }
+
+    public static List<T> GetElements<T>(int count, List<T> list)
+    {
+        List<T> result = new List<T>();
+        List<T> candiate = new List<T>(list);
 
         int idx;
         for (int i = 0; i < count; ++i)
@@ -21,35 +27,6 @@ public static class CustomRandom
         }
 
         return result;
-    }
-    public static List<int> GetUniqueInt(int count, List<int> list)
-    {
-        List<int> result = new List<int>();
-        List<int> candiate = new List<int>(list);
-
-        int idx;
-        for (int i = 0; i < count; ++i)
-        {
-            idx = Random.Range(0, candiate.Count);
-
-            result.Add(candiate[idx]);
-            candiate.RemoveAt(idx);
-        }
-
-        return result;
-    }
-    public static void GetUniqueInt(List<int> randList, List<int> list)
-    {
-        List<int> candiate = new List<int>(list);
-
-        int idx;
-        for (int i = 0; i < randList.Count; ++i)
-        {
-            idx = Random.Range(0, candiate.Count);
-
-            randList[i] = candiate[idx];
-            candiate.RemoveAt(idx);
-        }
     }
 
     public static List<int> DistributeNumber(int distNum, int distRandListCount, List<int> limit)

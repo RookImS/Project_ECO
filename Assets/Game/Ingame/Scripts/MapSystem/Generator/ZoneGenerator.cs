@@ -47,27 +47,12 @@ public class ZoneGenerator
 
     public void MakeRiver(Map map, List<Tile> riverMaker)
     {
-        List<int> rowList = new List<int>();
-        List<int> colList = new List<int>();
-        foreach (Tile tile in riverMaker)
-        {
-            rowList.Add(tile.row);
-            colList.Add(tile.col);
-        }
-
-        List<int> rowRange = CustomTool.MakeRange(rowList, 1, 0, Map.size - 1);
-        List<int> colRange = CustomTool.MakeRange(colList, 1, 0, Map.size - 1);
-
         List<Zone> incompleteZoneList = GetIncompleteZone(map);
-        List<Zone> candiateZoneList = new List<Zone>();
-        foreach (Zone zone in incompleteZoneList)
-        {
-            if (rowRange[0] <= zone.row && zone.row <= rowRange[1] &&
-                colRange[0] <= zone.col && zone.col <= colRange[1])
-                candiateZoneList.Add(zone);
-        }
+        List<Zone> candiateZoneList = new List<Zone>(incompleteZoneList);
+        candiateZoneList.Remove(riverMaker[0].biome.zone);
+        candiateZoneList.Remove(riverMaker[1].biome.zone);
 
-        int riverPointCount = Random.Range(1, candiateZoneList.Count / 2);
+        int riverPointCount = Random.Range(2, candiateZoneList.Count / 2);
         List<Zone> riverPointZoneList = CustomRandom.GetElements(riverPointCount, candiateZoneList);
 
         _biomeGenerator.MakeRiver(map, riverPointZoneList, riverMaker);

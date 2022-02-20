@@ -16,6 +16,7 @@ public static class CustomTool
 
         return result;
     }
+
     // num1, num2를 extend만큼 확장했을 떄의 최솟값과 최댓값을 반환한다. 각각은 limit에 걸릴 경우 limit을 반환한다.
     public static List<int> MakeRange(int num1, int num2, int extend, int minLimit, int maxLimit)
     {
@@ -73,9 +74,20 @@ public static class CustomTool
             vec.x * Mathf.Sin(delta) + vec.y * Mathf.Cos(delta)
         );
     }
+    public static Vector2 Vec2RadRotate(float vx, float vy, float delta)
+    {
+        return new Vector2(
+            vx * Mathf.Cos(delta) - vy * Mathf.Sin(delta),
+            vx * Mathf.Sin(delta) + vy * Mathf.Cos(delta)
+        );
+    }
     public static Vector2 Vec2DegRotate(Vector2 vec, float delta)
     {
         return Vec2RadRotate(vec, Mathf.Deg2Rad * delta);
+    }
+    public static Vector2 Vec2DegRotate(float vx, float vy, float delta)
+    {
+        return Vec2RadRotate(vx, vy, Mathf.Deg2Rad * delta);
     }
 
     // y = mx + b의 형태인 방정식을 만든다. m, b가 차례로 들어간 list를 반환한다.
@@ -106,6 +118,10 @@ public static class CustomTool
         equation.Add(b);
 
         return equation;
+    }
+    public static List<float> MakeLineEquation(Vector2 v1, Vector2 v2)
+    {
+        return MakeLineEquation(v1.x, v1.y, v2.x, v2.y);
     }
 
     public static float GetYByLineEquation(List<float> equation, float x)

@@ -34,11 +34,11 @@ public class Map : MonoBehaviour
         return edgeTileList;
     }
 
-    public Tile FindTile(int tileRow, int tileCol)
+    public Tile FindTile(int tileCol, int tileRow)
     {
-        int childRow = tileRow / (Zone.size * Biome.size);
         int childCol = tileCol / (Zone.size * Biome.size);
+        int childRow = tileRow / (Zone.size * Biome.size);
 
-        return zoneList[childRow * size + childCol].FindTile(tileRow, tileCol);
+        return zoneList[childRow * size + childCol].FindTile(tileCol, tileRow);
     }
 }

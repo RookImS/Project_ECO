@@ -150,78 +150,94 @@ public class TileGenerator
             Tile startTile = riverMaker[i];
             Tile endTile = riverMaker[i + 1];
 
-            List<int> rowRange, colRange;
-            rowRange = CustomTool.MakeRange(startTile.row, endTile.row, Biome.size, 0, Map.size * Zone.size * Biome.size - 1);
-            colRange = CustomTool.MakeRange(startTile.col, endTile.col, Biome.size, 0, Map.size * Zone.size * Biome.size - 1);
-            List<Tile> candiateTileList = GetTileInRange(map, startTile, endTile, rowRange, colRange);
-            candiateTileList.Remove(startTile);
-            candiateTileList.Remove(endTile);
-
-            int area = (rowRange[1] - rowRange[0]) * (colRange[1] - colRange[0]);
-            int pointNum = Random.Range(area / (15 * Biome.size), area / (10 * Biome.size));
-            List<Tile> detailRiverPoint = GetDetailPoint(startTile, endTile, pointNum, candiateTileList);
-
+            List<int> colRange, rowRange;
+            List<Vector2> detailRiverPoint = GetDetailPoint(startTile, endTile);
+            List<Tile> candiateTileList = new List<Tile>();
+            Vector2 startPoint, endPoint;
             for (int k = 0; k < detailRiverPoint.Count - 1; ++k)
             {
-                startTile = detailRiverPoint[k];
-                endTile = detailRiverPoint[k + 1];
-                List<float> lineEquation = CustomTool.MakeLineEquation(
-                    startTile.transform.position.x, startTile.transform.position.y,
-                    endTile.transform.position.x, endTile.transform.position.y);
+                startPoint = detailRiverPoint[k];
+                endPoint = detailRiverPoint[k + 1];
 
-                rowRange = CustomTool.MakeRange(startTile.row, endTile.row);
-                colRange = CustomTool.MakeRange(startTile.col, endTile.col);
+                List<float> lineEquation = CustomTool.MakeLineEquation(
+                    startPoint, endPoint);
+
+                colRange = CustomTool.MakeRange(Tile.XToCol(startPoint.x), Tile.XToCol(endPoint.x));
+                rowRange = CustomTool.MakeRange(Tile.YToRow(startPoint.y), Tile.YToRow(endPoint.y));
                 candiateTileList.Clear();
-                candiateTileList = GetTileInRange(map, startTile, endTile, rowRange, colRange);
+                candiateTileList = GetTileInRange(map, colRange, rowRange);
                 ConnectRiver(candiateTileList, lineEquation);
             }
         }
     }
 
-    private List<Tile> GetTileInRange(Map map, Tile startTile, Tile endTile, List<int> rowRange, List<int> colRange)
+    private List<Tile> GetTileInRange(Map map, List<int> colRange, List<int> rowRange)
     {
         List<Tile> tileListInRange = new List<Tile>();
         Tile tempTile;
-        for (int i = rowRange[0]; i <= rowRange[1]; ++i)
+
+        int wholeTileNum = Map.size * Zone.size * Biome.size - 1;
+
+        int colMin = colRange[0] < 0 ? 0 : colRange[0];
+        int rowMin = rowRange[0] < 0 ? 0 : rowRange[0];
+        int colMax = colRange[1] > wholeTileNum ? wholeTileNum : colRange[1];
+        int rowMax = rowRange[1] > wholeTileNum ? wholeTileNum : rowRange[1];
+
+        for (int j = rowMin; j <= rowMax; ++j)
         {
-            for (int j = colRange[0]; j <= colRange[1]; ++j)
+            for (int i = colMin; i <= colMax; ++i)
             {
                 tempTile = map.FindTile(i, j);
 
-                if (!_isGenTile[tempTile])
-                    tileListInRange.Add(map.FindTile(i, j));
+                if (tempTile.kind != TileManager.TileKind.Water)
+                    tileListInRange.Add(tempTile);
             }
         }
 
         return tileListInRange;
     }
 
-    private List<Tile> GetDetailPoint(Tile startTile, Tile endTile, int count, List<Tile> candiate)
+    private List<Vector2> GetDetailPoint(Tile startTile, Tile endTile)
     {
-        List<Tile> detailRiverPoint = CustomRandom.GetElements(count, candiate);
-
         Vector2 riverDirVec = new Vector2(endTile.col - startTile.col, endTile.row - startTile.row);
         float riverDirAngle = Vector2.SignedAngle(new Vector2(1, 0), riverDirVec.normalized);
-        List<Vector2> rotatedRiverPoint = new List<Vector2>();
-        Dictionary<Vector2, Tile> originalDict = new Dictionary<Vector2, Tile>();
-        for (int i = 0; i < detailRiverPoint.Count; ++i)    // 시작과 끝을 제외한 나머지를 정렬
+        Vector2 deltaForStandardize = -CustomTool.Vec2DegRotate(startTile.col, startTile.row, -riverDirAngle);
+
+        Vector2 standardizedStart = CustomTool.Vec2DegRotate(startTile.col, startTile.row, -riverDirAngle) + deltaForStandardize;
+        Vector2 standardizedEnd = CustomTool.Vec2DegRotate(endTile.col, endTile.row, -riverDirAngle) + deltaForStandardize;
+        List<Vector2> standizedPointList = new List<Vector2>();
+        float standardizedCol, standardizedRow;
+        int pointNum = (int)Random.Range(Mathf.Sqrt(standardizedEnd.x), Mathf.Sqrt(standardizedEnd.x) * 1.5f);
+        for (int i = 0; i < pointNum; ++i)    // 시작과 끝을 제외한 나머지를 정렬
         {
-            Vector2 rotatePoint = CustomTool.Vec2DegRotate(new Vector2(detailRiverPoint[i].col, detailRiverPoint[i].row), -riverDirAngle);
-            rotatedRiverPoint.Add(rotatePoint);
-            originalDict[rotatePoint] = detailRiverPoint[i];
+            standardizedCol = Random.Range(standardizedStart.x - Biome.size, standardizedEnd.x + Biome.size);
+            standardizedRow = Random.Range(2, Biome.size);
+            standardizedRow = CustomRandom.PickByProba(50) ? standardizedRow : -standardizedRow;
+
+            Vector2 standardizedPoint = new Vector2(standardizedCol, standardizedRow);
+            standizedPointList.Add(standardizedPoint);
         }
-        rotatedRiverPoint.Sort((vec1, vec2) => { return vec1.x.CompareTo(vec2.x); });
-        for (int i = 0; i < detailRiverPoint.Count; ++i)
-            detailRiverPoint[i] = originalDict[rotatedRiverPoint[i]];
-        detailRiverPoint.Insert(0, startTile);
-        detailRiverPoint.Add(endTile);
+        standizedPointList.Sort((vec1, vec2) => { return vec1.x.CompareTo(vec2.x); });
+
+        List<Vector2> detailRiverPoint = new List<Vector2>();
+        detailRiverPoint.Add(new Vector2(startTile.transform.position.x, startTile.transform.position.y));
+        foreach (Vector2 standizedPoint in standizedPointList)
+        {
+            Vector2 point = CustomTool.Vec2DegRotate(standizedPoint - deltaForStandardize, riverDirAngle);
+            point.x = (int)point.x;
+            point.y = (int)point.y;
+            point.x = point.x * Tile.scale.x;
+            point.y = point.y * Tile.scale.y;
+            detailRiverPoint.Add(point);
+        }
+        detailRiverPoint.Add(new Vector2(endTile.transform.position.x, endTile.transform.position.y));
 
         return detailRiverPoint;
     }
 
     private void ConnectRiver(List<Tile> candiateTileList, List<float> lineEquation)
     {
-        if (lineEquation[0] == float.NaN || lineEquation.Count == 1)
+        if (float.IsNaN(lineEquation[0]) || lineEquation.Count == 1)
         {
             foreach (Tile tile in candiateTileList)
                 GenerateTile(tile, TileManager.TileKind.Water);

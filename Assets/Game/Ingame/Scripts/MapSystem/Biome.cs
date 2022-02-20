@@ -18,14 +18,13 @@ public class Biome : MonoBehaviour
     public Dictionary<TileManager.TileKind, List<Tile>> tileListAsKind;
 
     [SerializeField]
-    private int _row;
-    [SerializeField]
     private int _col;
-    public int row { get { return _row; } private set { _row = value; } }
+    [SerializeField]
+    private int _row;
     public int col { get { return _col; } private set { _col = value; } }
+    public int row { get { return _row; } private set { _row = value; } }
 
-    public static int size 
-    { get; private set; }
+    public static int size { get; private set; }
     public static int tileCount { get; private set; }
 
     private void Awake()
@@ -47,22 +46,22 @@ public class Biome : MonoBehaviour
         }
     }
 
-    public void SetRow(int row)
-    {
-        _row = row;
-    }
     public void SetCol(int col)
     {
         _col = col;
     }
-
-    public int GetRowDistance(Biome other)
+    public void SetRow(int row)
     {
-        return Mathf.Abs(_row - other.row);
+        _row = row;
     }
+
     public int GetColDistance(Biome other)
     {
         return Mathf.Abs(_col - other.col);
+    }
+    public int GetRowDistance(Biome other)
+    {
+        return Mathf.Abs(_row - other.row);
     }
 
     public List<Tile> GetEdgeTiles()
@@ -78,13 +77,13 @@ public class Biome : MonoBehaviour
         return edgeTileList;
     }
 
-    public Tile FindTile(int tileRow, int tileCol)
+    public Tile FindTile(int tileCol, int tileRow)
     {
-        int childRow = tileRow - row * size;
         int childCol = tileCol - col * size;
+        int childRow = tileRow - row * size;
 
-        if (childRow < 0 || childRow >= size ||
-            childCol < 0 || childCol >= size)
+        if (childCol < 0 || childCol >= size ||
+            childRow < 0 || childRow >= size)
         {
             Debug.Log("이 biome에 없는 tile입니다.");
             return null;

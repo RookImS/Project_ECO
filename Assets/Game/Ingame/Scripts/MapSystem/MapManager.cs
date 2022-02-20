@@ -26,11 +26,14 @@ public class MapManager : MonoBehaviour
     {
         mapGenerator.Init(seed, map, mapSetting);
 
+        mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Mountain);
+        mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Mountain, false);
+
         mapGenerator.MakeRiver(map, 1);
 
         // 산 설정
-        //mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Mountain);
-        //mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Mountain, false);
+
+
 
         //// 물 설정
         //mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Water);

@@ -14,25 +14,26 @@ public class Tile : MonoBehaviour
     public bool isEdge;
 
     [SerializeField]
-    private int _row;
-    [SerializeField]
     private int _col;
-    public int row { get { return _row; } private set { _row = value; } }
+    [SerializeField]
+    private int _row;
     public int col { get { return _col; } private set { _col = value; } }
+    public int row { get { return _row; } private set { _row = value; } }
 
     public static Vector2 scale { get; private set; }
 
     protected float _fertility;
     private int _height;
 
-    public void SetRow(int row)
-    {
-        _row = row;
-    }
     public void SetCol(int col)
     {
         _col = col;
     }
+    public void SetRow(int row)
+    {
+        _row = row;
+    }
+
     public virtual void Init()
     {
         scale = new Vector2(transform.lossyScale.x, transform.lossyScale.y);
@@ -40,14 +41,19 @@ public class Tile : MonoBehaviour
         ChangeKind(TileManager.TileKind.None);
     }
 
-    public int GetRowDistance(Tile other)
-    {
-        return Mathf.Abs(_row - other.row);
-    }
     public int GetColDistance(Tile other)
     {
         return Mathf.Abs(_col - other.col);
     }
+    public int GetRowDistance(Tile other)
+    {
+        return Mathf.Abs(_row - other.row);
+    }
+    public float GetColRowDistance(Tile other)
+    {
+        
+        return Mathf.Sqrt(Mathf.Pow(GetColDistance(other), 2) + Mathf.Pow(GetRowDistance(other), 2));
+    }    
 
     public bool isInTile(Vector2 pos)
     {
@@ -84,5 +90,38 @@ public class Tile : MonoBehaviour
         biome.tileListAsKind[this.kind].Remove(this);
         this.kind = TileManager.tileInfoDict[kind].kind;
         biome.tileListAsKind[kind].Add(this);
+    }
+
+    public static int XToCol(float x)
+    {
+        return (int)(x / scale.x);
+    }
+    public static int YToRow(float y)
+    {
+        return (int)(y / scale.y);
+    }
+    public static Vector2 PosToColRow(float x, float y)
+    {
+        return new Vector2(XToCol(x), YToRow(y));
+    }
+    public static Vector2 PosToColRow(Vector2 pos)
+    {
+        return PosToColRow(pos.x, pos.y);
+    }
+    public static Vector2 PosToColRow(Vector3 pos)
+    {
+        return PosToColRow(pos.x, pos.y);
+    }
+    public static float ColToX(int col)
+    {
+        return col * scale.x;
+    }
+    public static float RowToY(int row)
+    {
+        return row * scale.y;
+    }
+    public static Vector2 ColRowToPos(int col, int row)
+    {
+        return new Vector2(ColToX(col), RowToY(row));
     }
 }

@@ -5,6 +5,16 @@ using UnityEngine;
 public class MapSetting : MonoBehaviour
 {
     [System.Serializable]
+    public struct RiverSetting
+    {
+        [Tooltip("강의 개수")]
+        public int num;
+        [Tooltip("강의 골격이 형성된 이후 강이 주변부로 퍼진 형태가 될 확률")]
+        [Range(0, 100)]
+        public int sprawlProba;
+    }
+
+    [System.Serializable]
     public struct TileSetting
     {
         [Tooltip("맵을 형성할 타일의 종류")]
@@ -22,6 +32,7 @@ public class MapSetting : MonoBehaviour
 
     }
 
+    public RiverSetting riverSetting;
     public List<TileSetting> tileSettings;
 
     public void Init()

@@ -44,7 +44,7 @@ public class BiomeGenerator
             _tileGenerator.StretchTile(biome, tileSetting, isCanOverlap);
     }
 
-    public void MakeRiver(Map map, List<Zone> riverPointZoneList, List<Tile> riverMaker)
+    public void MakeRiver(Map map, MapSetting.RiverSetting riverSetting, List<Zone> riverPointZoneList, List<Tile> riverMaker)
     {
         List<Biome> riverPointBiomeList = new List<Biome>();
         List<Biome> incompleteBiomeList;
@@ -54,7 +54,10 @@ public class BiomeGenerator
             riverPointBiomeList.Add(CustomRandom.GetElement(incompleteBiomeList));
         }
 
-        _tileGenerator.MakeRiver(map, riverPointBiomeList, riverMaker);
+        List<Tile> riverTileList = _tileGenerator.MakeRiver(map, riverPointBiomeList, riverMaker);
+
+        foreach (Tile tile in riverTileList)
+            _tileGenerator.MakeTileSprawl(tile, TileManager.TileKind.Water, riverSetting.sprawlProba, false);
     }
 
     public List<Biome> GetIncompleteBiome(Zone zone)

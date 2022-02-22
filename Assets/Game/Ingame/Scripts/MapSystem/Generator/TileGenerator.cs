@@ -38,25 +38,25 @@ public class TileGenerator
             GenerateTile(tile, kind);
     }
 
-    public void StretchTile(Biome biome, MapSetting.TileSetting tileSetting, bool isCanOverlap)
+    public void StretchTile(Biome biome, MapSetting.TileSetting tileSetting, bool canOverlap)
     {
         List<Tile> startTileList = new List<Tile>(biome.tileListAsKind[tileSetting.kind]);
         foreach (Tile tile in startTileList)
         {
             _changedTile.Clear();
             int dir = Random.Range(0, 4);
-            MakeTileBranch(tile, tileSetting.kind, tileSetting.stretchProba, 0, dir, isCanOverlap);
+            MakeTileBranch(tile, tileSetting.kind, tileSetting.stretchProba, 0, dir, canOverlap);
         }
 
         startTileList = new List<Tile>(biome.tileListAsKind[tileSetting.kind]);
         foreach (Tile tile in startTileList)
         {
             _changedTile.Clear();
-            MakeTileSprawl(tile, tileSetting.kind, tileSetting.sprawlProba, isCanOverlap);
+            MakeTileSprawl(tile, tileSetting.kind, tileSetting.sprawlProba, canOverlap);
         }
     }
 
-    private void MakeTileBranch(Tile tile, TileManager.TileKind kind, int stretchProba, int bendProba, int dir, bool isCanOverlap)
+    private void MakeTileBranch(Tile tile, TileManager.TileKind kind, int stretchProba, int bendProba, int dir, bool canOverlap)
     {
         _changedTile.Add(tile);
 
@@ -67,7 +67,7 @@ public class TileGenerator
             {
                 if (_isGenTile[neighborTile])
                 {
-                    if (isCanOverlap && CustomRandom.PickByProba(50))
+                    if (canOverlap && CustomRandom.PickByProba(50))
                         goto BranchTile;
                 }
                 else
@@ -91,14 +91,14 @@ public class TileGenerator
                                 dir = (dir + 3) % 4;
                         }
                         GenerateTile(neighborTile, kind);
-                        MakeTileBranch(neighborTile, kind, stretchProba - 7, bendProba + 3, dir, isCanOverlap);
+                        MakeTileBranch(neighborTile, kind, stretchProba - 7, bendProba + 3, dir, canOverlap);
                     }
                 }
             }
         }
     }
 
-    private void MakeTileSprawl(Tile tile, TileManager.TileKind kind, int sprawlProba, bool isCanOverlap)
+    public void MakeTileSprawl(Tile tile, TileManager.TileKind kind, int sprawlProba, bool canOverlap)
     {
         _changedTile.Add(tile);
 
@@ -108,7 +108,7 @@ public class TileGenerator
             {
                 if (_changedTile.Find(x => ReferenceEquals(x, neighborTile)) == null)   // 변경된 타일이 아니면
                 {
-                    if (isCanOverlap)
+                    if (canOverlap)
                     {
                         goto MakeTile;
                     }
@@ -127,7 +127,7 @@ public class TileGenerator
                         if (isChange)
                         {
                             GenerateTile(neighborTile, kind);
-                            MakeTileSprawl(neighborTile, kind, sprawlProba - 5, isCanOverlap);
+                            MakeTileSprawl(neighborTile, kind, sprawlProba - 5, canOverlap);
                         }
                     }
                 }
@@ -135,9 +135,10 @@ public class TileGenerator
         }
     }
 
-    public void MakeRiver(Map map, List<Biome> riverPointBiomeList, List<Tile> riverMaker)
+    public List<Tile> MakeRiver(Map map, List<Biome> riverPointBiomeList, List<Tile> riverMaker)
     {
         List<Tile> incompleteTileList;
+        List<Tile> genTiles = new List<Tile>();
 
         foreach (Biome biome in riverPointBiomeList)
         {
@@ -166,9 +167,11 @@ public class TileGenerator
                 rowRange = CustomTool.MakeRange(Tile.YToRow(startPoint.y), Tile.YToRow(endPoint.y));
                 candiateTileList.Clear();
                 candiateTileList = GetTileInRange(map, colRange, rowRange);
-                ConnectRiver(candiateTileList, lineEquation);
+                genTiles.AddRange(ConnectRiver(candiateTileList, lineEquation));
             }
         }
+
+        return genTiles;
     }
 
     private List<Tile> GetTileInRange(Map map, List<int> colRange, List<int> rowRange)
@@ -235,12 +238,17 @@ public class TileGenerator
         return detailRiverPoint;
     }
 
-    private void ConnectRiver(List<Tile> candiateTileList, List<float> lineEquation)
+    private List<Tile> ConnectRiver(List<Tile> candiateTileList, List<float> lineEquation)
     {
+        List<Tile> genTiles = new List<Tile>();
+
         if (float.IsNaN(lineEquation[0]) || lineEquation.Count == 1)
         {
             foreach (Tile tile in candiateTileList)
+            {
                 GenerateTile(tile, TileManager.TileKind.Water);
+                genTiles.Add(tile);
+            }
         }
         else
         {
@@ -258,6 +266,7 @@ public class TileGenerator
                     (tilePosY - Tile.scale.y / 2 < y2 && y2 <= tilePosY + Tile.scale.y / 2))
                 {
                     GenerateTile(tile, TileManager.TileKind.Water);
+                    genTiles.Add(tile);
                 }
                 else
                 {
@@ -270,17 +279,25 @@ public class TileGenerator
                     {
                         if ((tilePosX - Tile.scale.x / 2 <= x3 && x3 < tilePosX + Tile.scale.x / 2) ||
                             (tilePosX - Tile.scale.x / 2 <= x4 && x4 < tilePosX + Tile.scale.x / 2))
+                        {
                             GenerateTile(tile, TileManager.TileKind.Water);
+                            genTiles.Add(tile);
+                        }
                     }
                     else
                     {
                         if ((tilePosX - Tile.scale.x / 2 < x3 && x3 <= tilePosX + Tile.scale.x / 2) ||
                             (tilePosX - Tile.scale.x / 2 < x4 && x4 <= tilePosX + Tile.scale.x / 2))
+                        {
                             GenerateTile(tile, TileManager.TileKind.Water);
+                            genTiles.Add(tile);
+                        }
                     }
                 }
             }
         }
+
+        return genTiles;
     }
 
     public List<Tile> GetIncompleteTile(Biome biome)

@@ -39,13 +39,13 @@ public class ZoneGenerator
         }
     }
 
-    public void StretchTile(Map map, MapSetting.TileSetting tileSetting, bool isCanOverlap)
+    public void StretchTile(Map map, MapSetting.TileSetting tileSetting, bool canOverlap)
     {
         foreach (Zone zone in map.zoneList)
-            _biomeGenerator.StretchTile(zone, tileSetting, isCanOverlap);
+            _biomeGenerator.StretchTile(zone, tileSetting, canOverlap);
     }
 
-    public void MakeRiver(Map map, List<Tile> riverMaker)
+    public void MakeRiver(Map map, MapSetting.RiverSetting riverSetting, List<Tile> riverMaker)
     {
         List<Zone> incompleteZoneList = GetIncompleteZone(map);
         List<Zone> candiateZoneList = new List<Zone>(incompleteZoneList);
@@ -55,7 +55,7 @@ public class ZoneGenerator
         int riverPointCount = Random.Range(2, candiateZoneList.Count / 2);
         List<Zone> riverPointZoneList = CustomRandom.GetElements(riverPointCount, candiateZoneList);
 
-        _biomeGenerator.MakeRiver(map, riverPointZoneList, riverMaker);
+        _biomeGenerator.MakeRiver(map, riverSetting, riverPointZoneList, riverMaker);
     }
 
     public List<Zone> GetIncompleteZone(Map map)

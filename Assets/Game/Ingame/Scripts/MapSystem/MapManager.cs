@@ -24,12 +24,12 @@ public class MapManager : MonoBehaviour
 
     public void GenerateMap(int seed)
     {
-        mapGenerator.Init(seed, map, mapSetting);
+        mapGenerator.Init(seed, map);
 
         mapGenerator.SetStartTile(map, mapSetting, TileManager.TileKind.Mountain);
         mapGenerator.StretchTile(map, mapSetting, TileManager.TileKind.Mountain, false);
 
-        mapGenerator.MakeRiver(map, 1);
+        mapGenerator.MakeRiver(map, mapSetting.riverSetting);
 
         // 산 설정
 

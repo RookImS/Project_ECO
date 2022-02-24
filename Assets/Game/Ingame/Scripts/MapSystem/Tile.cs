@@ -68,7 +68,6 @@ public class Tile : MonoBehaviour
 
     public virtual void SetTile(TileManager.TileKind kind)
     {
-        biome.tileListAsKind[kind].Add(this);
         _fertility = 40;    // 나중에 산출 방법 정해야함
         ChangeKind(kind);
     }
@@ -87,9 +86,8 @@ public class Tile : MonoBehaviour
     {
         spriteRenderer.sprite = TileManager.tileInfoDict[kind].sprite;
 
-        biome.tileListAsKind[this.kind].Remove(this);
+        biome.SetTileAsKind(this, kind);
         this.kind = TileManager.tileInfoDict[kind].kind;
-        biome.tileListAsKind[kind].Add(this);
     }
 
     public static int XToCol(float x)

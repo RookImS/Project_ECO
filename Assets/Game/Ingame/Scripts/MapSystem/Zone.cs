@@ -15,6 +15,7 @@ public class Zone : MonoBehaviour
     private int _col;
     [SerializeField]
     private int _row;
+    private Dictionary<TileManager.TileKind, int> _tileCountAsKind;
     public int col { get { return _col; } private set { _col = value; } }
     public int row { get { return _row; } private set { _row = value; } }
 
@@ -29,6 +30,10 @@ public class Zone : MonoBehaviour
 
     public void Init()
     {
+        _tileCountAsKind = new Dictionary<TileManager.TileKind, int>();
+        foreach (TileManager.TileKind kind in TileManager.GetEnumList<TileManager.TileKind>())
+            _tileCountAsKind.Add(kind, 0);
+
         foreach (Biome biome in biomeList)
             biome.Init();
     }
@@ -41,6 +46,14 @@ public class Zone : MonoBehaviour
     {
         _row = row;
     }
+    public void SetTileCountAsKind(TileManager.TileKind prevKind, TileManager.TileKind currentKind)
+    {
+        if(prevKind != currentKind)
+            --_tileCountAsKind[prevKind];
+        ++_tileCountAsKind[currentKind];
+
+        map.SetTileCountAsKind(prevKind, currentKind);
+    }
 
     public int GetColDistance(Zone other)
     {
@@ -49,6 +62,10 @@ public class Zone : MonoBehaviour
     public int GetRowDistance(Zone other)
     {
         return Mathf.Abs(_row - other.row);
+    }
+    public int GetTileCountAsKind(TileManager.TileKind kind)
+    {
+        return _tileCountAsKind[kind];
     }
 
     public List<Tile> GetEdgeTiles()

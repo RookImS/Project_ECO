@@ -40,7 +40,7 @@ public class TileGenerator
 
     public void StretchTile(Biome biome, MapSetting.TileSetting tileSetting, bool canOverlap)
     {
-        List<Tile> startTileList = new List<Tile>(biome.tileListAsKind[tileSetting.kind]);
+        List<Tile> startTileList = new List<Tile>(biome.GetTileAsKind(tileSetting.kind));
         foreach (Tile tile in startTileList)
         {
             _changedTile.Clear();
@@ -48,7 +48,7 @@ public class TileGenerator
             MakeTileBranch(tile, tileSetting.kind, tileSetting.stretchProba, 0, dir, canOverlap);
         }
 
-        startTileList = new List<Tile>(biome.tileListAsKind[tileSetting.kind]);
+        startTileList = new List<Tile>(biome.GetTileAsKind(tileSetting.kind));
         foreach (Tile tile in startTileList)
         {
             _changedTile.Clear();

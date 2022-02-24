@@ -31,6 +31,9 @@ public class MapManager : MonoBehaviour
 
         mapGenerator.MakeRiver(map, mapSetting.riverSetting);
 
+
+        Debug.Log("물 : " + map.GetTileCountAsKind(TileManager.TileKind.Water));
+        Debug.Log("산 : " + map.GetTileCountAsKind(TileManager.TileKind.Mountain));
         // 산 설정
 
 
